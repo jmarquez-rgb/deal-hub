@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deal Hub | Nextiva Solutions Consulting</title>
+<style>
+:root{
+  --navy:#0F2B58; --navy-2:#1A437B; --blue:#0061B8; --blue-2:#275FB2; --blue-3:#316499; --mist:#97B4BC;
+  --cream:#FEFAF4; --paper:#FFFFFF; --line:#E9E2D5; --line-2:#F2ECE0;
+  --ink:#14213D; --ink-2:#4A5568; --ink-3:#7B8494;
+  --dusk:#013453; --dusk-2:#215378; --dusk-3:#52687f; --glow:#cf8151; --ember:#cf6a34; --ember-2:#bb4819;
+  --good:#1B9A6B; --warn:#D99A12; --bad:#D4452F;
+  --good-bg:#E4F5EE; --warn-bg:#FCF1D6; --bad-bg:#FBE4DF; --blue-bg:#E6F0FB;
+  --r-lg:24px; --r-md:16px; --r-pill:999px;
+  --font:"Helvetica Neue",Helvetica,"Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:var(--font);background:var(--cream);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.sr{position:absolute;left:-9999px}
+
+/* shell */
+#app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+.side{background:var(--navy);color:#fff;padding:22px 16px 20px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.side::after{content:"";position:absolute;left:0;right:0;bottom:0;height:260px;background:linear-gradient(to top,rgba(207,106,52,.65),rgba(207,129,81,.22) 45%,rgba(15,43,88,0));pointer-events:none}
+.side>*{position:relative;z-index:1}
+.brand{padding:4px 10px 18px}
+.brand img{width:132px;display:block}
+.brand .app{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:15px;font-weight:500;letter-spacing:.2px;color:#DCE7F7}
+.beta{font-size:11px;background:var(--ember);color:#fff;border-radius:var(--r-pill);padding:1px 8px;font-weight:600}
+.nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.nav button{display:flex;align-items:center;gap:12px;background:none;border:0;color:#CBD9EF;padding:10px 12px;border-radius:var(--r-pill);cursor:pointer;text-align:left;font-size:14.5px}
+.nav button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.nav button:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav button[aria-current="page"]{background:#fff;color:var(--navy);font-weight:600}
+.nav .count{margin-left:auto;font-size:12px;background:rgba(255,255,255,.16);border-radius:var(--r-pill);padding:0 8px;min-width:24px;text-align:center}
+.nav button[aria-current="page"] .count{background:var(--blue-bg);color:var(--navy)}
+.side .foot{margin-top:auto;font-size:12px;color:#fff;padding:0 10px;line-height:1.5}
+.side .foot b{font-weight:600}
+.side .tag{opacity:.9}
+
+.main{min-width:0}
+.top{position:sticky;top:0;z-index:20;background:rgba(254,250,244,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;padding:12px 28px}
+.search{flex:1;max-width:520px;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:var(--r-pill);padding:0 16px;height:42px}
+.search svg{width:18px;height:18px;stroke:var(--ink-3);fill:none;stroke-width:2;flex:none}
+.search input{border:0;outline:0;background:none;flex:1;min-width:0}
+.search:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,97,184,.14)}
+.search kbd{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:0 6px;color:var(--ink-3)}
+.sp{flex:1}
+.savechip{font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);border-radius:var(--r-pill);padding:7px 12px}
+.savechip i{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
+.savechip.mem i{background:var(--warn)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:#fff;color:var(--ink);height:40px;padding:0 18px;border-radius:var(--r-pill);cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{border-color:var(--blue-3);text-decoration:none}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{background:var(--blue-2)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad)}
+.btn.sm{height:32px;padding:0 14px;font-size:13px}
+.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.content{padding:24px 28px 80px;max-width:1500px}
+.banner{display:flex;gap:12px;align-items:center;background:var(--blue-bg);border:1px solid #C9DDF4;color:var(--navy);padding:10px 16px;border-radius:var(--r-pill);margin-bottom:18px;font-size:13px}
+.banner .btn{margin-left:auto}
+.pagehead{display:flex;align-items:flex-end;gap:16px;margin:2px 0 16px;flex-wrap:wrap}
+.pagehead h1{font-size:30px;font-weight:300;margin:0;letter-spacing:-.3px;color:var(--navy)}
+.pagehead p{margin:4px 0 0;color:var(--ink-2)}
+.pagehead .grow{flex:1}
+
+/* hero */
+.hero{position:relative;border-radius:30px;color:#fff;padding:28px 32px 26px;overflow:hidden;background:linear-gradient(172deg,var(--dusk) 0%,var(--dusk-2) 38%,var(--dusk-3) 60%,var(--glow) 88%,var(--ember-2) 100%);margin-bottom:18px;min-height:268px;display:flex;flex-direction:column}
+.hero svg.mtn{position:absolute;left:0;right:0;bottom:0;width:100%;height:96px;pointer-events:none}
+.hero>*:not(svg){position:relative;z-index:1}
+.hero .hi{font-size:15px;opacity:.92}
+.hero .big{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:4px}
+.hero .big b{font-size:64px;font-weight:300;letter-spacing:-2px;line-height:1.05}
+.hero .big span{font-size:18px;opacity:.9}
+.hero .sub{font-size:15px;opacity:.95;margin-top:2px}
+.hero .pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:18px}
+.hero .gp{background:rgba(1,26,48,.58);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);border-radius:var(--r-pill);padding:9px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;color:#fff;font-size:14px}
+.hero .gp:hover{background:rgba(1,26,48,.74)}
+.hero .gp b{font-size:18px;font-weight:600}
+.hero .heroact{position:absolute;right:26px;top:24px;display:flex;gap:8px;z-index:2}
+.hero .heroact .btn{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);color:#fff;height:36px}
+.hero .heroact .btn:hover{background:rgba(255,255,255,.26)}
+
+/* cards */
+.grid{display:grid;gap:16px}
+.g-kpi{grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:16px}
+.g-2{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.g-2b{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.g-2e{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px 22px;min-width:0}
+.card h3{margin:0 0 2px;font-size:17px;font-weight:600;color:var(--navy)}
+.card .hint{color:var(--ink-3);font-size:12.5px;margin:0 0 14px}
+.card .chead{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.card .chead .grow{flex:1}
+.card .chead h3{margin:0}
+.kpi{padding:16px 20px}
+.kpi .l{color:var(--ink-2);font-size:13px}
+.kpi .v{font-size:30px;font-weight:300;letter-spacing:-.8px;color:var(--navy);margin-top:2px}
+.kpi .s{font-size:12.5px;color:var(--ink-3)}
+.kpi.warn .v{color:var(--ember-2)}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:var(--r-pill);padding:2px 10px;font-size:12px;background:var(--line-2);color:var(--ink-2);white-space:nowrap;border:1px solid transparent}
+.chip.good{background:var(--good-bg);color:#0F6B49}
+.chip.warn{background:var(--warn-bg);color:#8A5F00}
+.chip.bad{background:var(--bad-bg);color:#A02B19}
+.chip.blue{background:var(--blue-bg);color:var(--navy-2)}
+.chip.line{background:#fff;border-color:var(--line)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.dot.green{background:var(--good)}.dot.yellow{background:var(--warn)}.dot.red{background:var(--bad)}
+.stagepill{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;border:1px solid var(--line);border-radius:var(--r-pill);padding:2px 10px 2px 8px;background:#fff;white-space:nowrap}
+.stagepill i{width:8px;height:8px;border-radius:50%}
+
+/* attention list */
+.att{display:flex;flex-direction:column}
+.att .row{display:grid;grid-template-columns:14px minmax(0,1.2fr) minmax(0,2fr) auto;gap:14px;align-items:center;padding:12px 8px;border-top:1px solid var(--line-2);cursor:pointer;border-radius:12px}
+.att .row:first-child{border-top:0}
+.att .row:hover{background:var(--cream)}
+.att .nm{font-weight:600;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.att .nm small{display:block;font-weight:400;color:var(--ink-3);font-size:12px}
+.att .why{display:flex;flex-wrap:wrap;gap:6px}
+.att .amt{text-align:right;font-weight:600;white-space:nowrap}
+.att .amt small{display:block;font-weight:400;color:var(--ink-3);font-size:12px}
+.empty{padding:26px 10px;text-align:center;color:var(--ink-3)}
+.empty b{display:block;color:var(--ink-2);margin-bottom:2px}
+
+/* bars */
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar{display:grid;grid-template-columns:minmax(150px,36%) 1fr minmax(90px,auto);gap:12px;align-items:center;cursor:default}
+.bar .n{font-size:13px;color:var(--ink);line-height:1.25}
+.bar .n small{color:var(--ink-3)}
+.bar .t{height:14px;background:var(--line-2);border-radius:var(--r-pill);overflow:hidden}
+.bar .t i{display:block;height:100%;border-radius:var(--r-pill);min-width:4px}
+.bar .m{text-align:right;font-weight:600;font-size:13px}
+.seg{display:inline-flex;background:var(--line-2);border-radius:var(--r-pill);padding:3px}
+.seg button{border:0;background:none;padding:4px 12px;border-radius:var(--r-pill);cursor:pointer;font-size:12.5px;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--navy);font-weight:600;box-shadow:0 1px 2px rgba(15,43,88,.12)}
+
+/* donut */
+.donutwrap{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.donut{position:relative;width:150px;height:150px;flex:none}
+.donut svg{width:150px;height:150px;transform:rotate(-90deg)}
+.donut .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut .c b{font-size:30px;font-weight:300;color:var(--navy);line-height:1}
+.donut .c span{font-size:12px;color:var(--ink-3)}
+.legend{display:flex;flex-direction:column;gap:9px;font-size:13px}
+.legend div{display:flex;align-items:center;gap:9px}
+.legend b{margin-left:auto;padding-left:14px}
+
+/* tables */
+.tablewrap{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);overflow:auto}
+table{border-collapse:collapse;width:100%}
+th{font-weight:600;font-size:12.5px;color:var(--ink-2);text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);background:#fffdf9;white-space:nowrap;position:sticky;top:0}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{color:var(--blue)}
+td{padding:11px 14px;border-bottom:1px solid var(--line-2);vertical-align:middle;white-space:nowrap}
+tr.click{cursor:pointer}
+tr.click:hover td{background:var(--cream)}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;white-space:nowrap}
+td .nm{font-weight:600;color:var(--navy)}
+td .sub{font-size:12px;color:var(--ink-3)}
+.trunc{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini{font-size:12px;color:var(--ink-3)}
+.over{color:var(--bad);font-weight:600}
+
+/* filters */
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.sel{height:36px;border:1px solid var(--line);background:#fff;border-radius:var(--r-pill);padding:0 34px 0 14px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%237B8494' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;cursor:pointer;max-width:200px}
+.sel:hover{border-color:var(--blue-3)}
+.sel.on{border-color:var(--blue);background-color:var(--blue-bg)}
+
+/* kanban */
+.kanban{display:flex;gap:14px;overflow-x:auto;padding-bottom:16px;align-items:flex-start}
+.col{flex:0 0 292px;background:#F7F1E6;border-radius:var(--r-lg);padding:12px;min-height:200px;border:1px dashed transparent}
+.col.over{border-color:var(--blue);background:var(--blue-bg)}
+.col .ch{padding:6px 8px 12px;border-bottom:3px solid var(--c,#999);margin-bottom:12px;border-radius:2px}
+.col .ch b{font-size:14.5px;color:var(--navy)}
+.col .ch .cnt{float:right;font-size:12px;background:#fff;border-radius:var(--r-pill);padding:0 9px;color:var(--ink-2)}
+.col .ch .sum{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.dc{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 14px 12px 18px;margin-bottom:10px;cursor:grab;position:relative;overflow:hidden}
+.dc:hover{border-color:var(--blue-3)}
+.dc.dragging{opacity:.45}
+.dc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--hc)}
+.dc .t{font-weight:600;color:var(--navy);line-height:1.25}
+.dc .who{font-size:12px;color:var(--ink-3);margin-top:2px}
+.dc .money{display:flex;gap:12px;margin-top:8px;font-size:13px}
+.dc .money b{font-weight:600}
+.dc .nx{font-size:12.5px;color:var(--ink-2);margin-top:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dc .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.dc.g-green{--hc:var(--good)}.dc.g-yellow{--hc:var(--warn)}.dc.g-red{--hc:var(--bad)}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,24,48,.42);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(780px,100vw);background:var(--cream);z-index:41;transform:translateX(102%);transition:transform .25s ease;display:flex;flex-direction:column;box-shadow:-18px 0 50px rgba(10,24,48,.2)}
+.drawer.on{transform:none}
+.dh{background:linear-gradient(172deg,var(--dusk) 0%,var(--dusk-2) 55%,var(--dusk-3) 100%);color:#fff;padding:20px 26px 18px;position:relative}
+.dh::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:linear-gradient(90deg,var(--glow),var(--ember),var(--ember-2))}
+.dh .row1{display:flex;gap:14px;align-items:flex-start}
+.dh h2{margin:0;font-size:26px;font-weight:300;letter-spacing:-.4px;flex:1}
+.dh .sub{opacity:.9;font-size:13px;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dh .x{background:rgba(255,255,255,.14);border:0;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:20px;line-height:1}
+.dh .x:hover{background:rgba(255,255,255,.28)}
+.dh .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.dh .acts .btn{height:36px}
+.dh .acts .btn:not(.primary){background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3);color:#fff}
+.dh .acts .btn.primary{background:#fff;color:var(--navy);border-color:#fff}
+.dh .acts .btn.primary:hover{background:var(--blue-bg)}
+.dh .acts .btn.off{opacity:.6;cursor:default}
+.dh .state{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.dh .sel{background-color:rgba(255,255,255,.95);color:var(--navy);font-weight:600;border:0}
+.hp{display:flex;background:rgba(255,255,255,.14);border-radius:var(--r-pill);padding:3px;gap:2px}
+.hp button{border:0;background:none;color:#fff;padding:5px 12px;border-radius:var(--r-pill);cursor:pointer;display:flex;gap:7px;align-items:center;font-size:13px}
+.hp button[aria-pressed="true"]{background:#fff;color:var(--navy);font-weight:600}
+.dbody{overflow:auto;flex:1;padding:0 26px 40px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
+.fact{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 14px}
+.fact .l{font-size:12px;color:var(--ink-3)}
+.fact .v{font-weight:600;color:var(--navy);overflow:hidden;text-overflow:ellipsis}
+.fact.wide{grid-column:span 3}
+.fact .v.big{font-size:20px;font-weight:300}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;position:sticky;top:0;background:var(--cream);z-index:2;padding-top:4px}
+.tabs button{background:none;border:0;padding:10px 14px;cursor:pointer;color:var(--ink-2);border-bottom:3px solid transparent;margin-bottom:-1px;font-weight:500}
+.tabs button[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--blue);font-weight:600}
+.tabs .n{font-size:11.5px;background:var(--line-2);border-radius:var(--r-pill);padding:0 7px;margin-left:4px}
+.box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:14px}
+.box h4{margin:0 0 8px;font-size:14px;color:var(--navy)}
+textarea,.in{width:100%;border:1px solid var(--line);border-radius:14px;padding:10px 14px;background:#fff;resize:vertical}
+textarea:focus,.in:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,97,184,.14)}
+.in{height:40px;padding:0 14px;border-radius:var(--r-pill)}
+.in.sel{max-width:none}
+.stepper{display:flex;gap:4px;margin:2px 0 4px}
+.stepper div{flex:1;font-size:11.5px;text-align:center;color:var(--ink-3)}
+.stepper div i{display:block;height:8px;border-radius:var(--r-pill);background:var(--line);margin-bottom:6px}
+.stepper div.done i{background:var(--blue-3)}
+.stepper div.now i{background:var(--ember)}
+.stepper div.now{color:var(--navy);font-weight:600}
+.flags{display:flex;gap:6px;flex-wrap:wrap}
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl .it{position:relative;margin-bottom:14px}
+.tl .it::before{content:"";position:absolute;left:-21px;top:5px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid var(--blue)}
+.tl .it.sys::before{border-color:var(--mist)}
+.tl .it.sys .tx{color:var(--ink-2);font-size:13px}
+.tl .hd{display:flex;gap:8px;align-items:center;margin-bottom:3px;flex-wrap:wrap}
+.tl .tx{white-space:pre-wrap;word-break:break-word}
+.x-btn{background:none;border:0;color:var(--ink-3);cursor:pointer;border-radius:50%;width:24px;height:24px}
+.x-btn:hover{background:var(--bad-bg);color:var(--bad)}
+.gi{border:1px solid var(--line);border-left:6px solid var(--sev);border-radius:16px;background:#fff;padding:12px 14px;margin-bottom:10px}
+.gi.High{--sev:var(--bad)}.gi.Med{--sev:var(--warn)}.gi.Low{--sev:var(--mist)}
+.gi.done{opacity:.6}
+.gi .h{display:flex;gap:10px;align-items:flex-start}
+.gi .h b{flex:1;color:var(--navy)}
+.gi .d{margin:6px 0;white-space:pre-wrap;color:var(--ink-2)}
+.gi .m{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.gi .sel{height:30px;font-size:12.5px}
+.ck{display:flex;gap:12px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line-2)}
+.ck:last-child{border-bottom:0}
+.ck input[type=checkbox]{width:20px;height:20px;accent-color:var(--blue)}
+.ck.done .tx{text-decoration:line-through;color:var(--ink-3)}
+.ck .tx{flex:1}
+.form-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.form-row>*{flex:1;min-width:130px}
+
+/* modal */
+.modalwrap{position:fixed;inset:0;z-index:60;display:none;align-items:flex-start;justify-content:center;background:rgba(10,24,48,.5);padding:40px 16px;overflow:auto}
+.modalwrap.on{display:flex}
+.modal{background:var(--cream);border-radius:28px;width:min(820px,100%);overflow:hidden;box-shadow:0 30px 80px rgba(10,24,48,.35)}
+.modal .mh{background:linear-gradient(172deg,var(--dusk),var(--dusk-2));color:#fff;padding:18px 26px;display:flex;align-items:center;gap:12px;position:relative}
+.modal .mh::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:linear-gradient(90deg,var(--glow),var(--ember-2))}
+.modal .mh h2{margin:0;font-weight:300;font-size:24px;flex:1}
+.modal .mb{padding:20px 26px}
+.modal .mf{padding:14px 26px 22px;display:flex;gap:10px;justify-content:flex-end}
+.fgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.fg{grid-column:span 2}.fg.w3{grid-column:span 3}.fg.w4{grid-column:span 4}.fg.w6{grid-column:span 6}
+.fg label{display:block;font-size:12.5px;color:var(--ink-2);margin-bottom:4px;font-weight:500}
+.fg .help{font-size:11.5px;color:var(--ink-3);margin-top:3px}
+.fsec{grid-column:span 6;font-weight:600;color:var(--navy);margin-top:6px;padding-top:12px;border-top:1px solid var(--line)}
+.fsec:first-child{border-top:0;margin-top:0;padding-top:0}
+
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:10px 20px;border-radius:var(--r-pill);opacity:0;transition:.25s;z-index:80;pointer-events:none}
+#toast.on{opacity:1;transform:translateX(-50%)}
+.col-chart{display:flex;align-items:flex-end;gap:12px;height:190px;padding-top:10px}
+.col-chart .c{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
+.col-chart .c .b{width:100%;max-width:64px;border-radius:12px 12px 4px 4px;background:linear-gradient(to top,var(--blue),var(--blue-3));min-height:3px}
+.col-chart .c.past .b{background:linear-gradient(to top,var(--ember-2),var(--glow))}
+.col-chart .c .v{font-size:12px;font-weight:600;margin-bottom:4px;color:var(--navy)}
+.col-chart .c .k{font-size:12px;color:var(--ink-3);margin-top:6px;white-space:nowrap}
+pre.report{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 18px;max-height:420px;overflow:auto;white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.55;margin:12px 0 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.listrow{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line-2);cursor:pointer}
+.listrow:first-child{border-top:0}
+.listrow:hover .nm{color:var(--blue)}
+.listrow .nm{font-weight:600;color:var(--navy);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.listrow .r{font-weight:600;white-space:nowrap}
+.daybadge{min-width:54px;text-align:center;border-radius:12px;padding:3px 8px;background:var(--blue-bg);color:var(--navy-2);font-size:12px;font-weight:600}
+.daybadge.soon{background:var(--warn-bg);color:#8A5F00}
+.daybadge.late{background:var(--bad-bg);color:#A02B19}
+
+@media (max-width:1180px){.g-kpi{grid-template-columns:repeat(3,minmax(0,1fr))}.g-2,.g-2b,.g-2e{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:900px){
+  #app{grid-template-columns:1fr}
+  .side{position:relative;height:auto;flex-direction:row;align-items:center;padding:10px 12px;overflow-x:auto;gap:8px}
+  .side::after,.side .foot,.brand .app{display:none}
+  .brand{padding:0 8px 0 4px}.brand img{width:96px}
+  .nav{flex-direction:row;margin:0}.nav button{white-space:nowrap;padding:8px 12px}.nav button span.lbl{display:inline}
+  .top{padding:10px 14px;flex-wrap:wrap}.content{padding:16px 14px 80px}
+  .g-kpi{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero .big b{font-size:46px}.hero .heroact{position:static;margin-bottom:10px}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}.fact.wide{grid-column:span 2}
+  .fg,.fg.w3,.fg.w4{grid-column:span 6}
+  .bar{grid-template-columns:minmax(100px,38%) 1fr minmax(70px,auto)}
+  .att .row{grid-template-columns:14px 1fr auto}.att .why{grid-column:2 / -1}
+  .savechip{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.side,.top,.drawer,.scrim,.filters,.btn{display:none!important}#app{display:block}.content{padding:0}}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside class="side">
+    <div class="brand">
+      <img src="data:image/png;base64,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" alt="Nextiva">
+      <div class="app">Deal Hub <span class="beta">Beta</span></div>
+    </div>
+    <nav class="nav" id="nav" aria-label="Main"></nav>
+    <div class="foot"><b>nextiva.com</b><br><span class="tag">a new dawn in customer experience.</span></div>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <span class="sr">Search deals</span>
+        <input id="q" type="search" placeholder="Search accounts, AEs, notes, Salesforce links" autocomplete="off"><kbd>/</kbd></label>
+      <div class="sp"></div>
+      <div class="savechip" id="savechip"><i></i><span>Saved in this browser</span></div>
+      <button class="btn primary" data-act="new-deal"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New deal</button>
+    </header>
+    <div class="content" id="view"></div>
+  </div>
+</div>
+<div class="scrim" id="scrim" data-act="close-drawer"></div>
+<section class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Deal details"></section>
+<div class="modalwrap" id="modal"><div class="modal" id="modalbox" role="dialog" aria-modal="true"></div></div>
+<div id="toast" role="status"></div>
+<input type="file" id="importfile" accept="application/json,.json" class="sr" tabindex="-1">
+<script>
+(function(){
+'use strict';
+/* =========================================================
+   Deal Hub — Nextiva Solutions Consulting (beta)
+   One file. No build step. Works on GitHub Pages.
+   Data is saved in this browser (localStorage). Use
+   Data & settings > Export to back up or move to a new machine.
+   ========================================================= */
+
+const STORE_KEY = 'nextiva-dealhub-v1';
+const STAGES = [
+  {id:'discovery',  name:'Discovery',            color:'#97B4BC', prob:0.10, open:true},
+  {id:'demo',       name:'Demo & Solutioning',   color:'#316499', prob:0.25, open:true},
+  {id:'validation', name:'Technical Validation', color:'#275FB2', prob:0.50, open:true},
+  {id:'proposal',   name:'Proposal / SOW',       color:'#1A437B', prob:0.70, open:true},
+  {id:'negotiation',name:'Negotiation',          color:'#0F2B58', prob:0.85, open:true},
+  {id:'won',        name:'Closed Won',           color:'#1B9A6B', prob:1,    open:false},
+  {id:'lost',       name:'Closed Lost',          color:'#9AA3B2', prob:0,    open:false},
+  {id:'hold',       name:'On Hold',              color:'#D99A12', prob:0,    open:false}
+];
+const OPEN = STAGES.filter(s=>s.open).map(s=>s.id);
+const STAGE = id => STAGES.find(s=>s.id===id) || STAGES[0];
+const PRODUCTS = ['NCC','Xbert AI','NCC + Xbert','UCaaS','UCaaS + NCC','Other'];
+const HEALTH = {green:'On track', yellow:'Watch', red:'At risk'};
+const GAP_TYPES = ['Gap','Issue','Risk','Blocker'];
+const GAP_CATS = ['Product','Integration','Security / Compliance','Pricing','Legal','Competitive','Resources','Timeline','Other'];
+const SEVS = ['High','Med','Low'];
+const GAP_STATUS = ['Open','In progress','Resolved'];
+const NOTE_TYPES = ['Update','Call','Demo','Internal','Email'];
+const MOTIONS = ['Strategic Expansion','Expansion','New logo','Partner','Other'];
+const OP_QUALITY = {unrated:'Not rated yet', good:'Well uncovered', thin:'Thin discovery', poor:'Poorly uncovered'};
+const MISS_REASONS = ['No real opportunity','No budget or not in market','Wrong contact / no decision maker','Op opened before discovery','Duplicate or already covered','No clear use case','Customer timing','Other'];
+const DISCO = [['use','Use case defined'],['budget','Budget / spend known'],['buyer','Decision maker known'],['timeline','Timeline known'],['incumbent','Current vendor and contract end known']];
+const RFI_STATUS = ['None','Anticipated','Received','Responded','Declined'];
+const RFP_STATUS = ['Not issued','Anticipated','Invited','Submitted','Shortlisted','Selected','Not selected','Declined'];
+const RFP_ORDER = ['Invited','Submitted','Shortlisted','Selected'];
+
+/* ---------- tiny helpers ---------- */
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
+const DAY = 864e5;
+const nowISO = () => new Date().toISOString();
+const sod = d => { const x=new Date(d); x.setHours(0,0,0,0); return x; };
+const ymd = d => { const x=new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); };
+const plusDays = n => ymd(Date.now()+n*DAY);
+const isoAgo = n => new Date(Date.now()-n*DAY).toISOString();
+const daysSince = iso => Math.max(0,Math.floor((Date.now()-new Date(iso))/DAY));
+const daysUntil = s => Math.round((new Date(s+'T00:00:00')-sod(new Date()))/DAY);
+const fmtDate = s => { if(!s) return '—'; const d = s.length<=10 ? new Date(s+'T00:00:00') : new Date(s); return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:(d.getFullYear()!==new Date().getFullYear()?'numeric':undefined)}); };
+const fmtDT = iso => new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+const money = n => '$'+Math.round(+n||0).toLocaleString('en-US');
+const moneyC = n => { n=+n||0; if(n>=1e6) return '$'+(n/1e6).toFixed(n>=1e7?1:2).replace(/\.?0+$/,'')+'M'; if(n>=1e3) return '$'+(n/1e3).toFixed(n>=1e5?0:1).replace(/\.0$/,'')+'K'; return '$'+Math.round(n); };
+const ago = n => n===0?'today':n===1?'1d ago':n+'d ago';
+const dueText = s => { if(!s) return ''; const n=daysUntil(s); return n<0?(-n)+'d overdue':n===0?'due today':n===1?'due tomorrow':'due in '+n+'d'; };
+const sum = (a,f) => a.reduce((t,x)=>t+(+f(x)||0),0);
+const uniq = a => Array.from(new Set(a.filter(Boolean)));
+const sfId = s => ((s||'').match(/006[A-Za-z0-9]{12,15}/)||[])[0] || '';
+const normUrl = u => { u=(u||'').trim(); if(!u) return ''; return /^https?:\/\//i.test(u)?u:'https://'+u; };
+const qKey = d => { const x=new Date(d); return x.getFullYear()+'-Q'+(Math.floor(x.getMonth()/3)+1); };
+const qLabel = k => k==='all'?'All time':k.split('-')[1]+' '+k.split('-')[0];
+const qRange = k => { const [y,q]=k.split('-Q').map(Number); return [new Date(y,(q-1)*3,1), new Date(y,q*3,1)]; };
+const prevQ = k => { let [y,q]=k.split('-Q').map(Number); q--; if(q<1){q=4;y--;} return y+'-Q'+q; };
+const isUrl = s => /^https?:\/\//i.test((s||'').trim());
+
+/* ---------- storage (localStorage, falls back to memory) ---------- */
+const Store = {
+  mode:'local',
+  load(){ try{ const r=localStorage.getItem(STORE_KEY); return r?JSON.parse(r):null; }catch(e){ Store.mode='memory'; return null; } },
+  save(s){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(s)); Store.mode='local'; }catch(e){ Store.mode='memory'; } }
+};
+
+/* ---------- state ---------- */
+let S = null;
+let cur = 'dashboard';
+let F = {q:'',ae:'',manager:'',product:'',health:''};
+let sortBy = {key:'mrr',dir:-1};
+let dashGroup = 'ae';
+let gapF = {status:'active',type:'',cat:'',sev:'',owner:''};
+let openId = null, drawerTab = 'overview';
+let reportScope = 'all';
+
+function persist(){ Store.save(S); const c=$('#savechip'); if(c){ c.classList.toggle('mem',Store.mode!=='local'); c.lastElementChild.textContent = Store.mode==='local'?'Saved in this browser':'Preview only — not saved'; } }
+
+/* ---------- load ---------- */
+function load(){
+  let s = Store.load();
+  if(!s || !Array.isArray(s.deals)) s = {v:1, deals:[], settings:{owner:'', aes:[], managers:[]}};
+  load0(s); S = s; persist();
+}
+
+/* ---------- derived ---------- */
+const isOpen = d => OPEN.includes(d.stage);
+const prob = st => STAGE(st).prob;
+const openGaps = d => d.gaps.filter(g=>g.status!=='Resolved');
+const dealById = id => S.deals.find(d=>d.id===id);
+const touch = d => { d.updatedAt = nowISO(); };
+function filtered(){
+  const q = F.q.trim().toLowerCase();
+  return S.deals.filter(d =>
+    (!F.ae||d.ae===F.ae) && (!F.manager||d.manager===F.manager) && (!F.product||d.product===F.product) && (!F.health||d.health===F.health) &&
+    (!q || [d.name,d.ae,d.manager,d.se,d.product,d.summary,d.nextStep,d.competitor,d.sfdc].join(' ').toLowerCase().includes(q) ||
+      d.notes.some(n=>n.text.toLowerCase().includes(q)) || d.gaps.some(g=>(g.title+' '+g.detail).toLowerCase().includes(q))));
+}
+function flagsFor(d){
+  const f=[]; if(!isOpen(d)) return f;
+  if(d.health==='red') f.push({k:'bad',t:'Marked at risk'});
+  const st = daysSince(d.updatedAt); if(st>=7) f.push({k:'warn',t:'No update in '+st+'d'});
+  if(d.nextStepDue){ const n=daysUntil(d.nextStepDue); if(n<0) f.push({k:'bad',t:'Next step '+(-n)+'d overdue'}); }
+  if(d.closeDate){ const n=daysUntil(d.closeDate); const si=OPEN.indexOf(d.stage);
+    if(n<0) f.push({k:'bad',t:'Close date passed'});
+    else if(n<=14 && si<=1) f.push({k:'warn',t:'Closing in '+n+'d, still early stage'}); }
+  const hi = openGaps(d).filter(g=>g.sev==='High').length; if(hi) f.push({k:'bad',t:hi+' high-severity open'});
+  return f;
+}
+const attScore = d => { const f=flagsFor(d); return f.length + (d.health==='red'?2:0) + (f.some(x=>x.k==='bad')?1:0); };
+function stats(ds){
+  const open = ds.filter(isOpen);
+  const q0 = new Date(); const qStart = new Date(q0.getFullYear(), Math.floor(q0.getMonth()/3)*3, 1);
+  const won = ds.filter(d=>d.stage==='won' && new Date(d.stageAt)>=qStart);
+  const lost = ds.filter(d=>d.stage==='lost' && new Date(d.stageAt)>=qStart);
+  const c30 = open.filter(d=>d.closeDate && daysUntil(d.closeDate)>=0 && daysUntil(d.closeDate)<=30);
+  return { open, mrr:sum(open,d=>d.mrr), tcv:sum(open,d=>d.tcv), weighted:sum(open,d=>d.mrr*prob(d.stage)),
+    risky: open.filter(d=>d.health!=='green'), red: open.filter(d=>d.health==='red'),
+    attention: open.filter(d=>flagsFor(d).length).sort((a,b)=>attScore(b)-attScore(a)||b.mrr-a.mrr),
+    c30, wonMrr:sum(won,d=>d.mrr), wonN:won.length, lostN:lost.length,
+    blockers: sum(open,d=>openGaps(d).length) };
+}
+
+const discoScore = d => DISCO.filter(([k])=>d.disco&&d.disco[k]).length;
+const hasRfx = d => (d.rfi&&d.rfi.status!=='None') || (d.rfp&&d.rfp.status!=='Not issued');
+const noRevenue = d => d.stage==='lost' || d.opQuality==='poor';
+
+/* =========================================================
+   UI helpers
+   ========================================================= */
+const ICON = {
+  dashboard:'<path d="M3 13h8V3H3zM13 21h8V11h-8zM13 3v6h8V3zM3 21h8v-6H3z"/>',
+  pipeline:'<rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="10" rx="1.5"/><rect x="17" y="4" width="4" height="13" rx="1.5"/>',
+  deals:'<path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>',
+  rfx:'<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/>',
+  quarterly:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 15h3"/>',
+  gaps:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+  reports:'<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>',
+  data:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>'
+};
+const NAV = [
+  ['dashboard','Command center'],['pipeline','Pipeline'],['deals','All deals'],['rfx','RFI / RFP'],
+  ['quarterly','Quarterly review'],['gaps','Gaps & issues'],['reports','Reports'],['data','Data & settings']
+];
+
+const healthDot = h => '<span class="dot '+h+'" title="'+HEALTH[h]+'"></span>';
+const healthChip = h => '<span class="chip '+(h==='green'?'good':h==='yellow'?'warn':'bad')+'">'+HEALTH[h]+'</span>';
+const stagePill = id => '<span class="stagepill"><i style="background:'+STAGE(id).color+'"></i>'+esc(STAGE(id).name)+'</span>';
+const chip = (t,c) => '<span class="chip '+(c||'')+'">'+esc(t)+'</span>';
+const pct = (a,b) => b? Math.round(a/b*100) : 0;
+const rfxChip = d => {
+  const out=[];
+  if(d.rfi.status!=='None') out.push(chip('RFI '+d.rfi.status.toLowerCase(), d.rfi.status==='Responded'?'good':d.rfi.status==='Declined'?'':'blue'));
+  if(d.rfp.status!=='Not issued') out.push(chip('RFP '+d.rfp.status.toLowerCase(), ['Selected','Shortlisted'].includes(d.rfp.status)?'good':['Not selected','Declined'].includes(d.rfp.status)?'bad':'blue'));
+  return out.join(' ');
+};
+function bars(items,fmt){
+  const max = Math.max(1,...items.map(i=>i.value));
+  return '<div class="bars">'+items.map(i=>'<div class="bar"><div class="n" title="'+esc(i.label)+'">'+esc(i.label)+(i.sub?' <small>'+esc(i.sub)+'</small>':'')+'</div><div class="t"><i style="width:'+Math.max(2,i.value/max*100)+'%;background:'+(i.color||'var(--blue)')+'"></i></div><div class="m">'+(fmt?fmt(i):i.value)+'</div></div>').join('')+'</div>';
+}
+function donut(segs,centerBig,centerSmall){
+  const R=54, C=2*Math.PI*R; const total = segs.reduce((t,s)=>t+s.v,0)||1; let off=0;
+  const arcs = segs.filter(s=>s.v>0).map(s=>{ const len=s.v/total*C; const a='<circle cx="75" cy="75" r="'+R+'" fill="none" stroke="'+s.c+'" stroke-width="18" stroke-dasharray="'+len+' '+(C-len)+'" stroke-dashoffset="'+(-off)+'"/>'; off+=len; return a; }).join('');
+  return '<div class="donut"><svg viewBox="0 0 150 150"><circle cx="75" cy="75" r="'+R+'" fill="none" stroke="#F2ECE0" stroke-width="18"/>'+arcs+'</svg><div class="c"><b>'+centerBig+'</b><span>'+centerSmall+'</span></div></div>';
+}
+function groupBy(ds,keyFn){ const m={}; ds.forEach(d=>{ const k=keyFn(d)||'Unassigned'; (m[k]=m[k]||[]).push(d); }); return Object.entries(m); }
+function selOpts(list,val,all){ return (all!=null?'<option value="">'+esc(all)+'</option>':'')+list.map(x=>'<option value="'+esc(x)+'"'+(x===val?' selected':'')+'>'+esc(x)+'</option>').join(''); }
+function roster(kind){ const base=(S.settings&&S.settings[kind])||[]; return uniq([...base,...S.deals.map(d=>kind==='aes'?d.ae:d.manager)]); }
+function filterBar(){
+  const ds=S.deals;
+  const sel=(k,label,list)=>'<select class="sel'+(F[k]?' on':'')+'" data-filter="'+k+'" aria-label="'+label+'">'+selOpts(k==='product'?uniq(list).sort():uniq(list),F[k],label)+'</select>';
+  const any = Object.values(F).some(Boolean);
+  return '<div class="filters">'+sel('ae','All AEs',roster('aes'))+sel('manager','All managers',roster('managers'))+sel('product','All products',uniq([...PRODUCTS,...ds.map(d=>d.product)]))+
+    '<select class="sel'+(F.health?' on':'')+'" data-filter="health" aria-label="Health"><option value="">Any health</option>'+Object.keys(HEALTH).map(h=>'<option value="'+h+'"'+(F.health===h?' selected':'')+'>'+HEALTH[h]+'</option>').join('')+'</select>'+
+    (any?'<button class="btn sm ghost" data-act="clear-filters">Clear filters</button>':'')+'</div>';
+}
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('on'),2200); }
+function download(name,text,type){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:type||'text/plain'})); a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),600); }
+const csv = rows => rows.map(r=>r.map(v=>{ v=String(v==null?'':v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }).join(',')).join('\n');
+function copyText(t){ if(navigator.clipboard&&window.isSecureContext){ return navigator.clipboard.writeText(t).then(()=>true).catch(()=>fallbackCopy(t)); } return Promise.resolve(fallbackCopy(t)); }
+function fallbackCopy(t){ const ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); let ok=false; try{ ok=document.execCommand('copy'); }catch(e){} ta.remove(); return ok; }
+
+/* =========================================================
+   Command center
+   ========================================================= */
+function viewDashboard(){
+  if(!S.deals.length) return '<div class="card" style="text-align:center;padding:56px 24px;margin-top:20px"><h3 style="font-size:24px;font-weight:300">Welcome to Deal Hub</h3><p class="hint" style="max-width:460px;margin:8px auto 20px">No deals yet. Add your first deal, or import a backup file to load the deals you already have.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn primary" data-act="new-deal">New deal</button><button class="btn" data-act="import-json">Import backup</button></div></div>';
+  const ds = filtered(); const st = stats(ds);
+  const hr = new Date().getHours(); const greet = hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+  const first = (S.settings.owner||'').split(' ')[0];
+  const today = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const mtn = '<svg class="mtn" viewBox="0 0 1200 96" preserveAspectRatio="none" aria-hidden="true"><path d="M0 96V70l90-14 110 20 120-34 80 22 110-30 90 26 130-38 100 28 110-20 100 22 160-30V96z" fill="#2a100d" opacity=".78"/><path d="M0 96V84l140-10 160 14 150-16 170 14 160-12 130 12 290-8V96z" fill="#14070a" opacity=".9"/></svg>';
+  let h = '';
+  h += '<section class="hero"><div class="heroact"><button class="btn" data-act="go" data-v="reports">Weekly update</button><button class="btn" data-act="new-deal">New deal</button></div>'+
+    '<div class="hi">'+greet+(first?', '+esc(first):'')+'. '+today+'</div>'+
+    '<div class="big"><b>'+moneyC(st.mrr)+'</b><span>monthly recurring revenue in play</span></div>'+
+    '<div class="sub">'+st.open.length+' open deals, '+moneyC(st.tcv)+' potential TCV, '+moneyC(st.weighted)+' weighted MRR</div>'+
+    '<div class="pills">'+
+      '<button class="gp" data-act="go" data-v="deals"><b>'+st.attention.length+'</b> need attention</button>'+
+      '<button class="gp" data-act="go" data-v="deals"><b>'+st.c30.length+'</b> closing in 30 days, '+moneyC(sum(st.c30,d=>d.mrr))+' MRR</button>'+
+      '<button class="gp" data-act="go" data-v="gaps"><b>'+st.blockers+'</b> open gaps and issues</button>'+
+      '<button class="gp" data-act="go" data-v="rfx"><b>'+ds.filter(d=>isOpen(d)&&hasRfx(d)&&!['Selected','Not selected','Declined'].includes(d.rfp.status)).length+'</b> RFI / RFP in flight</button>'+
+    '</div>'+mtn+'</section>';
+  h += filterBar();
+  h += '<div class="grid g-kpi">'+
+    kpi('Open deals',st.open.length,'across '+uniq(st.open.map(d=>d.ae)).length+' AEs')+
+    kpi('Potential TCV',moneyC(st.tcv),'average term '+(st.open.length?Math.round(sum(st.open,d=>d.term)/st.open.length):0)+' months')+
+    kpi('Weighted MRR',moneyC(st.weighted),'by stage probability')+
+    kpi('At risk or watch',st.risky.length,st.red.length+' marked at risk', st.risky.length?'warn':'')+
+    kpi('Won this quarter',moneyC(st.wonMrr),st.wonN+' won, '+st.lostN+' lost')+'</div>';
+
+  // attention + health
+  const att = st.attention.slice(0,7);
+  h += '<div class="grid g-2" style="margin-bottom:16px"><div class="card"><div class="chead"><div class="grow"><h3>Needs attention</h3><p class="hint" style="margin:0">Overdue next steps, quiet deals, passed close dates and high-severity issues</p></div><button class="btn sm" data-act="go" data-v="deals">All deals</button></div>'+
+    (att.length? '<div class="att">'+att.map(d=>'<div class="row" data-act="open" data-id="'+d.id+'" tabindex="0">'+healthDot(d.health)+'<div class="nm">'+esc(d.name)+'<small>'+esc(d.ae)+', '+esc(STAGE(d.stage).name)+'</small></div><div class="why">'+flagsFor(d).slice(0,3).map(f=>chip(f.t,f.k==='bad'?'bad':'warn')).join('')+'</div><div class="amt">'+moneyC(d.mrr)+'<small>MRR</small></div></div>').join('')+'</div>' : '<div class="empty"><b>Nothing needs attention.</b>Every open deal is moving.</div>')+
+    '</div>';
+  const hs = ['green','yellow','red'].map(k=>({k,n:st.open.filter(d=>d.health===k).length,m:sum(st.open.filter(d=>d.health===k),d=>d.mrr)}));
+  const col={green:'#1B9A6B',yellow:'#D99A12',red:'#D4452F'};
+  h += '<div class="card"><h3>Deal health</h3><p class="hint">Open deals by MRR</p><div class="donutwrap">'+donut(hs.map(x=>({v:x.m||x.n,c:col[x.k]})),st.open.length,'open deals')+
+    '<div class="legend">'+hs.map(x=>'<div><span class="dot '+x.k+'"></span>'+HEALTH[x.k]+'<b>'+x.n+' · '+moneyC(x.m)+'</b></div>').join('')+'</div></div></div></div>';
+
+  // stage bars + closing soon
+  const stageItems = STAGES.filter(s=>s.open).map(s=>{ const x=st.open.filter(d=>d.stage===s.id); return {label:s.name,sub:'('+x.length+')',value:sum(x,d=>d.mrr),color:s.color}; });
+  const soon = st.open.filter(d=>d.closeDate && daysUntil(d.closeDate)<=45).sort((a,b)=>a.closeDate.localeCompare(b.closeDate)).slice(0,7);
+  h += '<div class="grid g-2b" style="margin-bottom:16px"><div class="card"><h3>Pipeline by stage</h3><p class="hint">Monthly recurring revenue and deal count</p>'+bars(stageItems,i=>moneyC(i.value))+'</div>'+
+    '<div class="card"><h3>Closing soon</h3><p class="hint">Next 45 days, plus anything overdue</p>'+
+    (soon.length? soon.map(d=>{ const n=daysUntil(d.closeDate); return '<div class="listrow" data-act="open" data-id="'+d.id+'" tabindex="0"><span class="daybadge '+(n<0?'late':n<=7?'soon':'')+'">'+(n<0?(-n)+'d late':n===0?'today':n+'d')+'</span><span class="nm">'+esc(d.name)+'</span><span class="r">'+moneyC(d.mrr)+'</span></div>'; }).join('') : '<div class="empty">No deals closing in the next 45 days.</div>')+'</div></div>';
+
+  // group + gap themes
+  const gk = {ae:d=>d.ae, manager:d=>d.manager, product:d=>d.product}[dashGroup];
+  const grp = groupBy(st.open,gk).map(([n,a])=>({label:n,sub:'('+a.length+')',value:sum(a,d=>d.mrr),risk:a.filter(d=>d.health!=='green').length})).sort((a,b)=>b.value-a.value);
+  const cats = groupBy(st.open.flatMap(d=>openGaps(d).map(g=>({g,d}))),x=>x.g.cat).map(([n,a])=>({label:n,value:a.length,mrr:sum(uniq(a.map(x=>x.d.id)).map(id=>dealById(id)),d=>d.mrr)})).sort((a,b)=>b.value-a.value).slice(0,6);
+  h += '<div class="grid g-2e" style="margin-bottom:16px"><div class="card"><div class="chead"><div class="grow"><h3>Pipeline by owner</h3><p class="hint" style="margin:0">Open MRR. Red chip shows deals that are not on track.</p></div><div class="seg" role="group">'+
+    [['ae','AE'],['manager','Manager'],['product','Product']].map(([k,l])=>'<button data-act="dash-group" data-v="'+k+'" aria-pressed="'+(dashGroup===k)+'">'+l+'</button>').join('')+'</div></div>'+
+    (grp.length? bars(grp,i=>moneyC(i.value)+(i.risk?' <span class="chip warn" style="margin-left:4px">'+i.risk+'</span>':'')) : '<div class="empty">No open deals.</div>')+'</div>'+
+    '<div class="card"><h3>Where deals are getting stuck</h3><p class="hint">Open gaps and issues by category. Right side is the MRR they touch.</p>'+
+    (cats.length? bars(cats.map(c=>({label:c.label,value:c.value,color:'var(--ember)',mrr:c.mrr})),i=>i.value+' · '+moneyC(i.mrr)) : '<div class="empty">No open gaps or issues.</div>')+'</div></div>';
+
+  // activity
+  const act = ds.flatMap(d=>d.notes.filter(n=>n.type!=='System').map(n=>({d,n}))).sort((a,b)=>new Date(b.n.at)-new Date(a.n.at)).slice(0,6);
+  h += '<div class="card"><h3>Latest updates</h3><p class="hint">Most recent notes across your deals</p>'+(act.length? act.map(x=>'<div class="listrow" data-act="open" data-id="'+x.d.id+'" data-tab="notes" tabindex="0"><span class="chip blue">'+esc(x.n.type)+'</span><span class="nm" style="flex:none;max-width:210px">'+esc(x.d.name)+'</span><span class="mini" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(x.n.text)+'</span><span class="mini">'+ago(daysSince(x.n.at))+'</span></div>').join('') : '<div class="empty">No notes yet.</div>')+'</div>';
+  return h;
+}
+function kpi(l,v,s,c){ return '<div class="card kpi '+(c||'')+'"><div class="l">'+l+'</div><div class="v">'+v+'</div><div class="s">'+s+'</div></div>'; }
+
+/* =========================================================
+   Pipeline (kanban)
+   ========================================================= */
+function viewPipeline(){
+  const ds = filtered();
+  const cols = STAGES.map(s=>{
+    const x = ds.filter(d=>d.stage===s.id).sort((a,b)=>b.mrr-a.mrr);
+    return '<div class="col" data-stage="'+s.id+'" style="--c:'+s.color+'"><div class="ch"><span class="cnt">'+x.length+'</span><b>'+esc(s.name)+'</b><div class="sum">'+moneyC(sum(x,d=>d.mrr))+' MRR · '+moneyC(sum(x,d=>d.tcv))+' TCV</div></div>'+
+      (x.map(card).join('') || '<div class="mini" style="padding:10px 6px">Drop a deal here</div>')+'</div>';
+  }).join('');
+  return head('Pipeline','Drag a card to change its stage. Click a card to open it.')+filterBar()+'<div class="kanban">'+cols+'</div>';
+}
+function card(d){
+  const ng = openGaps(d); const hi = ng.filter(g=>g.sev==='High').length;
+  const n = d.nextStepDue? daysUntil(d.nextStepDue):null;
+  return '<div class="dc g-'+d.health+'" draggable="true" data-act="open" data-id="'+d.id+'" tabindex="0"><div class="t">'+esc(d.name)+'</div><div class="who">'+esc(d.ae)+' · '+esc(d.manager)+'</div>'+
+    '<div class="money"><span><b>'+money(d.mrr)+'</b> /mo</span><span><b>'+moneyC(d.tcv)+'</b> TCV</span></div>'+
+    (d.nextStep?'<div class="nx">'+esc(d.nextStep)+'</div>':'')+
+    '<div class="tags">'+(ng.length?chip(ng.length+' open'+(hi?', '+hi+' high':''),hi?'bad':'warn'):'')+(n!=null&&isOpen(d)?chip(dueText(d.nextStepDue),n<0?'bad':n<=2?'warn':''):'')+(hasRfx(d)?rfxChip(d):'')+(isOpen(d)?chip(daysSince(d.stageAt)+'d in stage','line'):'')+'</div></div>';
+}
+function head(title,sub,right){ return '<div class="pagehead"><div class="grow"><h1>'+title+'</h1>'+(sub?'<p>'+sub+'</p>':'')+'</div>'+(right||'')+'</div>'; }
+
+/* =========================================================
+   All deals (table)
+   ========================================================= */
+const COLS = [
+  ['health','',d=>({red:0,yellow:1,green:2})[d.health]],
+  ['name','Account',d=>d.name.toLowerCase()],
+  ['stage','Stage',d=>STAGES.findIndex(s=>s.id===d.stage)],
+  ['ae','AE',d=>d.ae.toLowerCase()],
+  ['manager','Manager',d=>d.manager.toLowerCase()],
+  ['mrr','MRR',d=>d.mrr,true],
+  ['tcv','TCV',d=>d.tcv,true],
+  ['closeDate','Close',d=>d.closeDate||'9999'],
+  ['next','Next step',d=>d.nextStepDue||'9999'],
+  ['rfx','RFI / RFP',d=>hasRfx(d)?0:1],
+  ['gaps','Open items',d=>openGaps(d).length,true],
+  ['updated','Updated',d=>-new Date(d.updatedAt),true]
+];
+function viewDeals(){
+  let ds = filtered(); const col = COLS.find(c=>c[0]===sortBy.key)||COLS[5];
+  ds = ds.slice().sort((a,b)=>{ const x=col[2](a), y=col[2](b); return (x<y?-1:x>y?1:0)*sortBy.dir; });
+  const rows = ds.map(d=>{ const ng=openGaps(d).length; const n=d.closeDate?daysUntil(d.closeDate):null; const nn=d.nextStepDue?daysUntil(d.nextStepDue):null;
+    return '<tr class="click" data-act="open" data-id="'+d.id+'" tabindex="0"><td>'+healthDot(d.health)+'</td>'+
+    '<td><div class="nm">'+esc(d.name)+'</div><div class="sub">'+esc(d.product)+(d.sfdc?' · <a href="'+esc(normUrl(d.sfdc))+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+(sfId(d.sfdc)?'Op '+esc(sfId(d.sfdc).slice(0,9))+'…':'Salesforce')+'</a>':'')+'</div></td>'+
+    '<td>'+stagePill(d.stage)+'</td><td>'+esc(d.ae)+'</td><td>'+esc(d.manager)+'</td><td class="num"><b>'+money(d.mrr)+'</b></td><td class="num">'+money(d.tcv)+'</td>'+
+    '<td>'+(d.closeDate?'<span class="'+(n<0&&isOpen(d)?'over':'')+'">'+fmtDate(d.closeDate)+'</span>':'—')+'</td>'+
+    '<td><div class="trunc">'+esc(d.nextStep||'—')+'</div>'+(d.nextStepDue&&isOpen(d)?'<div class="sub '+(nn<0?'over':'')+'">'+dueText(d.nextStepDue)+'</div>':'')+'</td>'+
+    '<td>'+(hasRfx(d)?rfxChip(d):'<span class="mini">—</span>')+'</td>'+
+    '<td class="num">'+(ng?chip(String(ng),openGaps(d).some(g=>g.sev==='High')?'bad':'warn'):'<span class="mini">0</span>')+'</td><td class="num mini">'+ago(daysSince(d.updatedAt))+'</td></tr>'; }).join('');
+  const tot = sum(ds.filter(isOpen),d=>d.mrr);
+  return head('All deals', ds.length+' deals shown. Open MRR '+moneyC(tot)+'. Click a column to sort.', '<button class="btn" data-act="export-deals">Export CSV</button>')+filterBar()+
+    '<div class="tablewrap"><table><thead><tr>'+COLS.map(c=>'<th class="sortable'+(c[3]?' num':'')+'" data-act="sort" data-k="'+c[0]+'" aria-sort="'+(sortBy.key===c[0]?(sortBy.dir>0?'ascending':'descending'):'none')+'">'+c[1]+(sortBy.key===c[0]?(sortBy.dir>0?' ▲':' ▼'):'')+'</th>').join('')+'</tr></thead><tbody>'+
+    (rows||'<tr><td colspan="12"><div class="empty"><b>No deals match.</b>Clear a filter or add a new deal.</div></td></tr>')+'</tbody></table></div>';
+}
+
+/* =========================================================
+   Gaps & issues register
+   ========================================================= */
+function allGaps(ds){ return ds.flatMap(d=>d.gaps.map(g=>({g,d}))); }
+function viewGaps(){
+  const ds = filtered();
+  let items = allGaps(ds).filter(({g})=> (gapF.status==='all' || (gapF.status==='active'? g.status!=='Resolved' : g.status==='Resolved')) && (!gapF.type||g.type===gapF.type) && (!gapF.cat||g.cat===gapF.cat) && (!gapF.sev||g.sev===gapF.sev) && (!gapF.owner||g.owner===gapF.owner));
+  const sevRank={High:0,Med:1,Low:2}; items.sort((a,b)=>sevRank[a.g.sev]-sevRank[b.g.sev]||new Date(a.g.at)-new Date(b.g.at));
+  const act = allGaps(ds).filter(({g})=>g.status!=='Resolved');
+  const dealsHit = uniq(act.map(x=>x.d.id)).map(dealById);
+  const cats = groupBy(act,x=>x.g.cat).map(([n,a])=>({label:n,value:a.length,mrr:sum(uniq(a.map(x=>x.d.id)).map(dealById),d=>d.mrr)})).sort((a,b)=>b.value-a.value);
+  const f = (k,label,list)=>'<select class="sel'+(gapF[k]?' on':'')+'" data-gapf="'+k+'" aria-label="'+label+'">'+selOpts(list,gapF[k],label)+'</select>';
+  return head('Gaps & issues','Everything blocking or at risk across your deals. Use it to spot product gaps and repeat problems.','<button class="btn" data-act="export-gaps">Export CSV</button>')+filterBar()+
+   '<div class="grid g-kpi" style="grid-template-columns:repeat(4,minmax(0,1fr))">'+kpi('Active items',act.length,'open or in progress')+kpi('High severity',act.filter(x=>x.g.sev==='High').length,'need action now',act.some(x=>x.g.sev==='High')?'warn':'')+kpi('Deals affected',dealsHit.length,'of '+ds.filter(isOpen).length+' open')+kpi('MRR touched',moneyC(sum(dealsHit.filter(isOpen),d=>d.mrr)),'open deals with an active item')+'</div>'+
+   '<div class="card" style="margin-bottom:16px"><h3>By category</h3><p class="hint">Active items. Right side is the number of items and the MRR they touch.</p>'+(cats.length?bars(cats.map(c=>({label:c.label,value:c.value,color:'var(--ember)',mrr:c.mrr})),i=>i.value+' · '+moneyC(i.mrr)):'<div class="empty">No active items.</div>')+'</div>'+
+   '<div class="filters"><div class="seg" role="group">'+[['active','Active'],['resolved','Resolved'],['all','All']].map(([k,l])=>'<button data-act="gap-status" data-v="'+k+'" aria-pressed="'+(gapF.status===k)+'">'+l+'</button>').join('')+'</div>'+f('type','All types',GAP_TYPES)+f('cat','All categories',GAP_CATS)+f('sev','All severities',SEVS)+f('owner','All owners',uniq(allGaps(ds).map(x=>x.g.owner)).sort())+'</div>'+
+   '<div class="tablewrap"><table><thead><tr><th></th><th>Item</th><th>Deal</th><th>Category</th><th>Owner</th><th>Reference</th><th>Age</th><th>Status</th></tr></thead><tbody>'+
+   (items.map(({g,d})=>'<tr class="click" data-act="open" data-id="'+d.id+'" data-tab="gaps" tabindex="0"><td>'+chip(g.sev,g.sev==='High'?'bad':g.sev==='Med'?'warn':'')+'</td><td><div class="nm">'+esc(g.title)+'</div><div class="sub">'+esc(g.type)+'</div></td><td>'+esc(d.name)+'<div class="sub">'+esc(d.ae)+' · '+moneyC(d.mrr)+' MRR</div></td><td>'+esc(g.cat)+'</td><td>'+esc(g.owner||'—')+'</td><td>'+(isUrl(g.ref)?'<a href="'+esc(g.ref)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open link</a>':esc(g.ref||'—'))+'</td><td class="mini">'+daysSince(g.at)+'d</td><td>'+chip(g.status,g.status==='Resolved'?'good':g.status==='In progress'?'blue':'')+'</td></tr>').join('')||'<tr><td colspan="8"><div class="empty"><b>Nothing here.</b>Add gaps and issues from inside a deal.</div></td></tr>')+'</tbody></table></div>';
+}
+
+/* =========================================================
+   RFI / RFP
+   ========================================================= */
+let rfxF = 'active';
+const rfpIn  = d => RFP_ORDER.includes(d.rfp.status);
+const rfpDone = d => ['Selected','Not selected','Declined'].includes(d.rfp.status);
+function rfxFunnel(ds){
+  const r = ds.filter(hasRfx);
+  const rec = r.filter(d=>['Received','Responded','Declined'].includes(d.rfi.status));
+  const resp = r.filter(d=>d.rfi.status==='Responded');
+  const inv = r.filter(rfpIn);
+  const sub = r.filter(d=>['Submitted','Shortlisted','Selected'].includes(d.rfp.status));
+  const sl = r.filter(d=>['Shortlisted','Selected'].includes(d.rfp.status));
+  const won = r.filter(d=>d.rfp.status==='Selected');
+  return {r,rec,resp,inv,sub,sl,won, notSel:r.filter(d=>d.rfp.status==='Not selected')};
+}
+function viewRfx(){
+  const ds = filtered(); const f = rfxFunnel(ds);
+  const steps = [['RFI received',f.rec],['RFI responded',f.resp],['Selected to participate in RFP',f.inv],['RFP submitted',f.sub],['Shortlisted',f.sl],['RFP won',f.won]];
+  const fun = steps.map(([l,a],i)=>({label:l,value:a.length,sub:i? '('+pct(a.length,steps[i-1][1].length)+'% of previous)':'',color:i===5?'var(--good)':'var(--blue)',mrr:sum(a,d=>d.mrr)}));
+  let list = f.r.slice();
+  if(rfxF==='active') list = list.filter(d=>!rfpDone(d) && d.stage!=='lost' && d.stage!=='won');
+  else if(rfxF==='decision') list = list.filter(d=>(d.rfi.status==='Responded'||d.rfi.status==='Received') && !rfpIn(d) && !rfpDone(d));
+  else if(rfxF==='closed') list = list.filter(d=>rfpDone(d) || d.stage==='won' || d.stage==='lost');
+  const dates = [];
+  f.r.forEach(d=>{ if(d.rfi.due && ['Received','Anticipated'].includes(d.rfi.status)) dates.push({d,t:'RFI due',s:d.rfi.due}); if(d.rfp.due && ['Invited','Anticipated'].includes(d.rfp.status)) dates.push({d,t:'RFP due',s:d.rfp.due}); });
+  dates.sort((a,b)=>a.s.localeCompare(b.s));
+  const noRfx = ds.filter(d=>!hasRfx(d) && isOpen(d));
+  list.sort((a,b)=>(a.rfp.due||a.rfi.due||'9999').localeCompare(b.rfp.due||b.rfi.due||'9999'));
+  return head('RFI / RFP','Track every RFI, whether we were selected to participate in the RFP, and where each response stands.','<div style="display:flex;gap:8px;align-items:center"><select class="sel" style="max-width:280px" id="rfxadd" aria-label="Add RFI or RFP to a deal"><option value="">Add RFI / RFP to a deal…</option>'+noRfx.map(d=>'<option value="'+d.id+'">'+esc(d.name)+'</option>').join('')+'</select><button class="btn" data-act="export-rfx">Export CSV</button></div>')+filterBar()+
+   '<div class="grid g-kpi">'+kpi('RFIs received',f.rec.length,f.resp.length+' responded')+kpi('Selected for RFP',f.inv.length,pct(f.inv.length,f.resp.length)+'% of RFIs we answered')+kpi('RFPs submitted',f.sub.length,f.sl.length+' shortlisted')+kpi('RFPs won',f.won.length,moneyC(sum(f.won,d=>d.mrr))+' MRR')+kpi('Not selected',f.notSel.length,'lost at RFI or RFP stage',f.notSel.length?'warn':'')+'</div>'+
+   '<div class="grid g-2b" style="margin-bottom:16px"><div class="card"><h3>From RFI to RFP to win</h3><p class="hint">How many made it to each step. Right side is the count and MRR.</p>'+bars(fun,i=>i.value+' · '+moneyC(i.mrr))+'</div>'+
+   '<div class="card"><h3>Coming due</h3><p class="hint">RFI and RFP responses with a deadline</p>'+(dates.length?dates.slice(0,7).map(x=>{ const n=daysUntil(x.s); return '<div class="listrow" data-act="open" data-id="'+x.d.id+'" data-tab="rfx" tabindex="0"><span class="daybadge '+(n<0?'late':n<=5?'soon':'')+'">'+(n<0?(-n)+'d late':n===0?'today':n+'d')+'</span><span class="nm">'+esc(x.d.name)+'</span><span class="chip blue">'+x.t+'</span></div>'; }).join(''):'<div class="empty">No upcoming RFI or RFP deadlines.</div>')+'</div></div>'+
+   '<div class="filters"><div class="seg" role="group">'+[['active','In flight'],['decision','Waiting on RFP decision'],['closed','Closed'],['all','All']].map(([k,l])=>'<button data-act="rfx-filter" data-v="'+k+'" aria-pressed="'+(rfxF===k)+'">'+l+'</button>').join('')+'</div></div>'+
+   '<div class="tablewrap"><table><thead><tr><th>Account</th><th>AE</th><th>RFI</th><th>RFI due</th><th>Selected for RFP?</th><th>RFP</th><th>RFP due</th><th class="num">MRR</th><th>Latest RFx note</th></tr></thead><tbody>'+
+   (list.map(d=>{ const sel = d.rfp.selected||(rfpIn(d)?'Yes':''); return '<tr class="click" data-act="open" data-id="'+d.id+'" data-tab="rfx" tabindex="0"><td><div class="nm">'+esc(d.name)+'</div><div class="sub">'+esc(STAGE(d.stage).name)+'</div></td><td>'+esc(d.ae)+'</td><td>'+chip(d.rfi.status,d.rfi.status==='Responded'?'good':d.rfi.status==='None'?'':'blue')+'</td><td>'+fmtDate(d.rfi.due)+'</td><td>'+(sel==='Yes'?chip('Yes','good'):sel==='No'?chip('No','bad'):sel==='Pending'?chip('Pending','warn'):'<span class="mini">—</span>')+'</td><td>'+chip(d.rfp.status,['Selected','Shortlisted'].includes(d.rfp.status)?'good':['Not selected','Declined'].includes(d.rfp.status)?'bad':d.rfp.status==='Not issued'?'':'blue')+'</td><td>'+fmtDate(d.rfp.due)+'</td><td class="num"><b>'+money(d.mrr)+'</b></td><td><div class="trunc">'+esc(d.rfp.note||d.rfi.note||'—')+'</div></td></tr>'; }).join('')||'<tr><td colspan="9"><div class="empty"><b>No RFI or RFP deals here.</b>Use the menu at the top to add one to a deal.</div></td></tr>')+'</tbody></table></div>';
+}
+
+/* =========================================================
+   Quarterly review (leadership view)
+   ========================================================= */
+let qSel = qKey(new Date());
+const ADV = ['validation','proposal','negotiation','won'];
+function qStats(key, ds){
+  const [a,b] = key==='all'? [new Date(2000,0,1),new Date(2100,0,1)] : qRange(key);
+  const inQ = iso => { const t=new Date(iso); return t>=a && t<b; };
+  const created = ds.filter(d=>inQ(d.createdAt));
+  const rated = created.filter(d=>d.opQuality!=='unrated');
+  const poor = rated.filter(d=>d.opQuality==='poor'), thin = rated.filter(d=>d.opQuality==='thin'), good = rated.filter(d=>d.opQuality==='good');
+  const dRated = created.filter(d=>d.discoRated);
+  const closedWon = ds.filter(d=>d.stage==='won' && inQ(d.stageAt)), closedLost = ds.filter(d=>d.stage==='lost' && inQ(d.stageAt));
+  const rfxQ = ds.filter(d=>hasRfx(d) && inQ(d.rfi.date||d.rfp.due||d.createdAt));
+  return { created, rated, poor, thin, good, dRated, adv:created.filter(d=>ADV.includes(d.stage)), won:closedWon, lost:closedLost,
+    avgDisco: dRated.length? sum(dRated,discoScore)/dRated.length : 0, rfx:rfxF2(rfxQ), createdMrr:sum(created,d=>d.mrr) };
+}
+function rfxF2(r){ const f=rfxFunnel(r); return {n:r.length, rec:f.rec.length, resp:f.resp.length, inv:f.inv.length, won:f.won.length}; }
+function quartersAvailable(){ const set = new Set(S.deals.map(d=>qKey(d.createdAt))); set.add(qKey(new Date())); return Array.from(set).sort().reverse(); }
+function delta(now,prev,suffix,goodUp){ if(prev==null) return ''; const d=now-prev; if(Math.abs(d)<0.5) return '<span class="mini">flat vs last quarter</span>'; const up=d>0; const good = goodUp? up : !up; return '<span class="chip '+(good?'good':'bad')+'">'+(up?'▲ ':'▼ ')+Math.abs(Math.round(d))+(suffix===' pts'&&Math.abs(Math.round(d))===1?' pt':(suffix||''))+' vs last quarter</span>'; }
+function discoDelta(cur,prev){ if(!prev||!prev.dRated.length||!cur.dRated.length) return cur.dRated.length+' of '+cur.created.length+' ops scored'; const d=cur.avgDisco-prev.avgDisco; if(Math.abs(d)<0.05) return '<span class="mini">flat vs last quarter</span>'; return '<span class="chip '+(d>0?'good':'bad')+'">'+(d>0?'▲ ':'▼ ')+Math.abs(d).toFixed(1)+' vs last quarter</span>'; }
+function viewQuarterly(){
+  const ds = filtered(); const qs = quartersAvailable();
+  if(qSel!=='all' && !qs.includes(qSel)) qSel = qs[0];
+  const cur = qStats(qSel,ds); const pk = qSel==='all'?null:prevQ(qSel); const prev = pk? qStats(pk,ds):null;
+  const nC = cur.created.length, nR = cur.rated.length, nD = cur.dRated.length;
+  const unrated = nC - nR; const enough = nR>=3;
+  const poorPct = pct(cur.poor.length,nR), prevPoorPct = prev&&prev.rated.length? pct(prev.poor.length,prev.rated.length):null;
+  const hit = DISCO.map(([k,l])=>({k,label:l,n:cur.dRated.filter(d=>d.disco[k]).length}));
+  const hitBars = hit.map(x=>({label:x.label,value:pct(x.n,nD),n:x.n,color:pct(x.n,nD)<50?'var(--bad)':pct(x.n,nD)<75?'var(--warn)':'var(--good)'}));
+  const weakest = nD? hit.slice().sort((a,b)=>a.n-b.n)[0] : null;
+  const missed = cur.created.filter(d=>d.stage==='lost' || d.opQuality==='poor');
+  const reasons = groupBy(missed.filter(d=>d.missReason),d=>d.missReason).map(([n,a])=>({label:n,value:a.length,mrr:sum(a,d=>d.mrr)})).sort((a,b)=>b.value-a.value);
+  const unlogged = missed.filter(d=>!d.missReason).length;
+  const byAe = groupBy(cur.created,d=>d.ae).map(([n,a])=>{ const rr=a.filter(d=>d.opQuality!=='unrated'); const p=rr.filter(d=>d.opQuality==='poor').length, t=rr.filter(d=>d.opQuality==='thin').length, g=rr.length-p-t, u=a.length-rr.length; const dr=a.filter(d=>d.discoRated);
+    return {n,a,p,t,g,u,rr:rr.length,disco:dr.length?sum(dr,discoScore)/dr.length:null,won:a.filter(d=>d.stage==='won').length,lost:a.filter(d=>d.stage==='lost').length,pp:pct(p,rr.length),mgr:a[0].manager||'—'}; }).sort((a,b)=>b.pp-a.pp||b.p-a.p||b.a.length-a.a.length);
+  const tk = [];
+  if(nC){
+    tk.push('<b>'+nC+' ops were opened in '+qLabel(qSel)+'</b> ('+moneyC(cur.createdMrr)+' deal MRR where sized).'+(unrated?' <b>'+unrated+' have not been rated yet</b> for discovery quality. Rate them inside each deal to complete this picture.':''));
+    if(enough) tk.push('<b>'+cur.poor.length+' of '+nR+' rated ops ('+poorPct+'%) were poorly uncovered</b>'+(prevPoorPct!=null?', compared with '+prevPoorPct+'% last quarter.':'.')); else if(nR) tk.push('Only '+nR+' op'+(nR>1?'s are':' is')+' rated so far, which is too few to show a rate.');
+    if(weakest) tk.push('<b>Weakest discovery area: '+weakest.label.toLowerCase()+'.</b> It was captured on only '+pct(weakest.n,nD)+'% of scored ops.');
+    if(reasons[0]) tk.push('<b>Most common reason ops did not turn into revenue: '+reasons[0].label.toLowerCase()+'</b> ('+reasons[0].value+' ops).');
+    const worst = enough ? byAe.find(x=>x.rr>=3&&x.p>0 && x.n!=='Unassigned') : null; if(worst) tk.push('<b>Highest poor-op rate: '+esc(worst.n)+'</b> ('+worst.p+' of '+worst.rr+' rated ops, '+worst.pp+'%).');
+    tk.push('<b>'+cur.adv.length+' of '+nC+' ops ('+pct(cur.adv.length,nC)+'%) advanced to technical validation or beyond.</b> '+cur.won.length+' closed won ('+moneyC(sum(cur.won,d=>d.mrr))+' MRR), '+cur.lost.length+' closed lost.');
+  } else tk.push('No ops were opened in this period for the filters you chose.');
+  const qlist = qSel==='all'? qs.slice(0,4) : (()=>{ const out=[]; let k=qSel; for(let i=0;i<4;i++){ out.push(k); k=prevQ(k); } return out; })();
+  const qrows = qlist.map(k=>{ const s=qStats(k,ds); const n=s.created.length, nr=s.rated.length; return '<tr><td><b>'+qLabel(k)+'</b></td><td class="num">'+n+'</td><td class="num">'+(nr?chip(pct(s.poor.length,nr)+'%',pct(s.poor.length,nr)>=30?'bad':pct(s.poor.length,nr)>=15?'warn':'good')+' <span class="mini">of '+nr+' rated</span>':'<span class="mini">not rated</span>')+'</td><td class="num">'+(s.dRated.length?s.avgDisco.toFixed(1)+' / 5':'—')+'</td><td class="num">'+(n?pct(s.adv.length,n)+'%':'—')+'</td><td class="num">'+s.won.length+' · '+moneyC(sum(s.won,d=>d.mrr))+'</td><td class="num">'+s.lost.length+'</td><td class="num">'+s.rfx.rec+'</td><td class="num">'+s.rfx.inv+'</td><td class="num">'+s.rfx.won+'</td></tr>'; }).join('');
+  const stageBars = STAGES.map(s=>({label:s.name,value:cur.created.filter(d=>d.stage===s.id).length,color:s.color})).filter(x=>x.value>0);
+  const r = cur.rfx;
+  return head('Quarterly review','How well we are uncovering Strategic Expansion ops, and how those ops progress. Built to read in two minutes.',
+    '<div class="seg" role="group" aria-label="Quarter">'+qs.map(k=>'<button data-act="set-q" data-v="'+k+'" aria-pressed="'+(qSel===k)+'">'+qLabel(k)+'</button>').join('')+'<button data-act="set-q" data-v="all" aria-pressed="'+(qSel==='all')+'">All time</button></div>')+filterBar()+
+  '<div class="card" style="margin-bottom:16px;border-left:8px solid var(--ember)"><h3>Key takeaways for '+qLabel(qSel)+'</h3><ul style="margin:8px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px">'+tk.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>'+
+  '<div class="grid g-kpi">'+
+    '<div class="card kpi"><div class="l">Ops opened</div><div class="v">'+nC+'</div><div class="s">'+(prev?delta(nC,prev.created.length,'',true):'')+'</div></div>'+
+    '<div class="card kpi '+(enough&&poorPct>=30?'warn':'')+'"><div class="l">Poorly uncovered</div><div class="v">'+(enough?poorPct+'%':'—')+'</div><div class="s">'+(nR?cur.poor.length+' of '+nR+' rated · ':'none rated yet · ')+(prevPoorPct!=null&&enough?delta(poorPct,prevPoorPct,' pts',false):'')+'</div></div>'+
+    '<div class="card kpi"><div class="l">Avg discovery score</div><div class="v">'+(nD?cur.avgDisco.toFixed(1):'—')+'<span style="font-size:16px;color:var(--ink-3)"> / 5</span></div><div class="s">'+discoDelta(cur,prev)+'</div></div>'+
+    '<div class="card kpi"><div class="l">Advanced past discovery</div><div class="v">'+pct(cur.adv.length,nC)+'%</div><div class="s">'+cur.adv.length+' reached validation or later</div></div>'+
+    '<div class="card kpi"><div class="l">Closed won</div><div class="v">'+moneyC(sum(cur.won,d=>d.mrr))+'</div><div class="s">'+cur.won.length+' won, '+cur.lost.length+' lost this period</div></div></div>'+
+  '<div class="grid g-2e" style="margin-bottom:16px"><div class="card"><h3>What we are missing in discovery</h3><p class="hint">Share of scored ops that had each basic captured. Red is under 50%. '+(nC-nD?(nC-nD)+' ops are not scored yet.':'')+'</p>'+(nD?bars(hitBars,i=>i.value+'% <span class="mini">('+i.n+'/'+nD+')</span>'):'<div class="empty"><b>No ops scored yet.</b>Open a deal, go to Overview, and tick the Discovery check boxes.</div>')+'</div>'+
+  '<div class="card"><h3>Why ops did not become revenue</h3><p class="hint">Ops opened this period that were lost or rated poorly uncovered.'+(unlogged?' '+unlogged+' have no reason logged yet.':'')+'</p>'+(reasons.length?bars(reasons.map(x=>({label:x.label,value:x.value,color:'var(--ember)',mrr:x.mrr})),i=>i.value+(i.mrr?' · '+moneyC(i.mrr):'')):'<div class="empty"><b>No misses with a reason logged.</b>Open a lost or poor op and pick a reason.</div>')+'</div></div>'+
+  '<div class="card" style="margin-bottom:16px"><h3>By AE: where uncovering is strong or weak</h3><p class="hint">Ops opened this period. Gray means not rated yet. Sorted by share rated poorly uncovered.</p><div class="tablewrap" style="border:0"><table><thead><tr><th>AE</th><th>Manager</th><th class="num">Ops opened</th><th>Quality mix</th><th class="num">Poor %</th><th class="num">Avg discovery</th><th class="num">Won</th><th class="num">Lost</th></tr></thead><tbody>'+
+    (byAe.map(x=>'<tr><td><b>'+esc(x.n)+'</b></td><td>'+esc(x.mgr)+'</td><td class="num">'+x.a.length+'</td><td style="min-width:180px"><div style="display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--line-2)"><i style="width:'+pct(x.g,x.a.length)+'%;background:var(--good)"></i><i style="width:'+pct(x.t,x.a.length)+'%;background:var(--warn)"></i><i style="width:'+pct(x.p,x.a.length)+'%;background:var(--bad)"></i><i style="width:'+pct(x.u,x.a.length)+'%;background:#D8D2C4"></i></div><div class="mini">'+x.g+' good · '+x.t+' thin · '+x.p+' poor · '+x.u+' not rated</div></td><td class="num">'+(x.rr?chip(x.pp+'%',x.pp>=40?'bad':x.pp>=20?'warn':'good'):'<span class="mini">—</span>')+'</td><td class="num">'+(x.disco==null?'—':x.disco.toFixed(1)+' / 5')+'</td><td class="num">'+x.won+'</td><td class="num">'+x.lost+'</td></tr>').join('')||'<tr><td colspan="8"><div class="empty">No ops opened in this period.</div></td></tr>')+'</tbody></table></div></div>'+
+  '<div class="grid g-2e" style="margin-bottom:16px"><div class="card"><h3>Where this period\'s ops are now</h3><p class="hint">Current stage of the ops opened in '+qLabel(qSel)+'</p>'+(stageBars.length?bars(stageBars,i=>i.value):'<div class="empty">No ops.</div>')+'</div>'+
+  '<div class="card"><h3>RFI / RFP this period</h3><p class="hint">Grouped by the quarter the RFI arrived</p><div class="two" style="margin-top:6px"><div class="fact"><div class="l">Deals with an RFI or RFP</div><div class="v big">'+r.n+'</div></div><div class="fact"><div class="l">RFIs received</div><div class="v big">'+r.rec+'</div></div><div class="fact"><div class="l">RFIs we responded to</div><div class="v big">'+r.resp+'</div></div><div class="fact"><div class="l">Selected to join RFP</div><div class="v big">'+r.inv+'</div></div></div><div class="fact" style="margin-top:12px"><div class="l">RFPs won</div><div class="v big">'+r.won+'</div></div></div></div>'+
+  '<div class="card"><h3>Quarter over quarter</h3><p class="hint">Last four quarters. Look for poor % going down and advanced % going up.</p><div class="tablewrap" style="border:0"><table><thead><tr><th>Quarter</th><th class="num">Ops opened</th><th class="num">Poor %</th><th class="num">Avg discovery</th><th class="num">Advanced</th><th class="num">Won</th><th class="num">Lost</th><th class="num">RFIs</th><th class="num">RFP invites</th><th class="num">RFP wins</th></tr></thead><tbody>'+qrows+'</tbody></table></div></div>';
+}
+
+/* =========================================================
+   Reports
+   ========================================================= */
+function scopeDeals(scope){
+  if(scope==='all') return S.deals;
+  const [k,v] = [scope.slice(0,1), scope.slice(2)];
+  return S.deals.filter(d=> k==='m'? d.manager===v : d.ae===v);
+}
+function buildReport(scope){
+  const ds = scopeDeals(scope); const st = stats(ds); const open = st.open;
+  const d0 = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+  const L = [];
+  L.push('STRATEGIC EXPANSION DEAL UPDATE — '+d0);
+  L.push('Scope: '+(scope==='all'?'All deals':scope.slice(2)+(scope[0]==='m'?' (manager)':' (AE)')));
+  L.push('');
+  L.push('HEADLINE');
+  L.push('• '+open.length+' open deals | '+money(st.mrr)+' MRR | '+money(st.tcv)+' potential TCV | '+money(st.weighted)+' weighted MRR');
+  L.push('• '+st.attention.length+' need attention | '+st.c30.length+' closing in 30 days ('+money(sum(st.c30,d=>d.mrr))+' MRR) | '+st.blockers+' open gaps/issues');
+  L.push('• This quarter: '+st.wonN+' won ('+money(st.wonMrr)+' MRR), '+st.lostN+' lost');
+  const q = qStats(qKey(new Date()),ds);
+  if(q.created.length) L.push('• Ops opened this quarter: '+q.created.length+', '+q.poor.length+' poorly uncovered ('+pct(q.poor.length,q.created.length)+'%), avg discovery score '+q.avgDisco.toFixed(1)+'/5');
+  const f = rfxFunnel(ds);
+  if(f.r.length) L.push('• RFI/RFP: '+f.rec.length+' RFIs received, '+f.resp.length+' responded, '+f.inv.length+' selected for RFP, '+f.sub.length+' submitted, '+f.won.length+' won');
+  [['red','AT RISK'],['yellow','WATCH'],['green','ON TRACK']].forEach(([h,label])=>{
+    const x = open.filter(d=>d.health===h).sort((a,b)=>b.mrr-a.mrr); if(!x.length) return;
+    L.push(''); L.push(label+' ('+x.length+')');
+    x.forEach(d=>{
+      L.push('• '+d.name+' — '+STAGE(d.stage).name+' | '+money(d.mrr)+'/mo | '+money(d.tcv)+' TCV'+(d.closeDate?' | close '+fmtDate(d.closeDate):'')+' | AE '+d.ae+', mgr '+d.manager);
+      if(d.summary) L.push('   Where we are: '+d.summary);
+      if(d.nextStep) L.push('   Next step: '+d.nextStep+(d.nextStepDue?' ('+dueText(d.nextStepDue)+')':''));
+      const og = openGaps(d).sort((a,b)=>SEVS.indexOf(a.sev)-SEVS.indexOf(b.sev)).slice(0,3);
+      if(og.length) L.push('   Open: '+og.map(g=>'['+g.sev+'] '+g.title).join('; '));
+      if(hasRfx(d)) L.push('   RFx: RFI '+d.rfi.status.toLowerCase()+', RFP '+d.rfp.status.toLowerCase()+(d.rfp.selected?' (selected to participate: '+d.rfp.selected.toLowerCase()+')':''));
+      if(d.sfdc) L.push('   SFDC: '+normUrl(d.sfdc));
+    });
+  });
+  const hold = ds.filter(d=>d.stage==='hold'); if(hold.length){ L.push(''); L.push('ON HOLD ('+hold.length+')'); hold.forEach(d=>L.push('• '+d.name+' — '+money(d.mrr)+'/mo. '+(d.summary||''))); }
+  return L.join('\n');
+}
+function viewReports(){
+  const ds = filtered(); const open = ds.filter(isOpen);
+  const scopes = [['all','All deals']].concat(uniq(S.deals.map(d=>d.manager)).sort().map(m=>['m:'+m,'Manager: '+m])).concat(uniq(S.deals.map(d=>d.ae)).sort().map(a=>['a:'+a,'AE: '+a]));
+  const rep = buildReport(reportScope);
+  // close month chart
+  const months = []; const base = new Date(); base.setDate(1);
+  for(let i=0;i<6;i++){ const m=new Date(base.getFullYear(),base.getMonth()+i,1); months.push({k:m.getFullYear()+'-'+m.getMonth(),label:m.toLocaleDateString('en-US',{month:'short'}),v:0,n:0}); }
+  let past={v:0,n:0}, later={v:0,n:0}, none={v:0,n:0};
+  open.forEach(d=>{ if(!d.closeDate){ none.v+=d.mrr; none.n++; return; } const dt=new Date(d.closeDate+'T00:00:00'); if(daysUntil(d.closeDate)<0){ past.v+=d.mrr; past.n++; return; } const m=months.find(x=>x.k===dt.getFullYear()+'-'+dt.getMonth()); if(m){ m.v+=d.mrr; m.n++; } else { later.v+=d.mrr; later.n++; } });
+  const cols = [{label:'Past due',v:past.v,n:past.n,past:true}].concat(months).concat([{label:'Later',v:later.v,n:later.n},{label:'No date',v:none.v,n:none.n}]);
+  const mx = Math.max(1,...cols.map(c=>c.v));
+  const chart = '<div class="col-chart">'+cols.map(c=>'<div class="c '+(c.past?'past':'')+'"><div class="v">'+(c.v?moneyC(c.v):'')+'</div><div class="b" style="height:'+(c.v?Math.max(4,c.v/mx*130):3)+'px;opacity:'+(c.v?1:.25)+'"></div><div class="k">'+c.label+(c.n?' ('+c.n+')':'')+'</div></div>').join('')+'</div>';
+  // aging
+  const aging = STAGES.filter(s=>s.open).map(s=>{ const x=open.filter(d=>d.stage===s.id); return {label:s.name,sub:'('+x.length+')',value:x.length?Math.round(sum(x,d=>daysSince(d.stageAt))/x.length):0,color:s.color}; });
+  // rollup
+  const roll = groupBy(open,d=>d.manager).map(([m,a])=>({m,a})).sort((x,y)=>sum(y.a,d=>d.mrr)-sum(x.a,d=>d.mrr));
+  const rrows = roll.map(({m,a})=>'<tr style="background:#FFFDF9"><td><b>'+esc(m)+'</b></td><td class="num">'+a.length+'</td><td class="num"><b>'+money(sum(a,d=>d.mrr))+'</b></td><td class="num">'+money(sum(a,d=>d.tcv))+'</td><td class="num">'+money(sum(a,d=>d.mrr*prob(d.stage)))+'</td><td class="num">'+a.filter(d=>d.health!=='green').length+'</td></tr>'+
+    groupBy(a,d=>d.ae).sort((x,y)=>sum(y[1],d=>d.mrr)-sum(x[1],d=>d.mrr)).map(([n,b])=>'<tr><td style="padding-left:30px">'+esc(n)+'</td><td class="num">'+b.length+'</td><td class="num">'+money(sum(b,d=>d.mrr))+'</td><td class="num">'+money(sum(b,d=>d.tcv))+'</td><td class="num">'+money(sum(b,d=>d.mrr*prob(d.stage)))+'</td><td class="num">'+b.filter(d=>d.health!=='green').length+'</td></tr>').join('')).join('');
+  return head('Reports','Share-ready updates for leadership.')+filterBar()+
+   '<div class="card" style="margin-bottom:16px"><div class="chead"><div class="grow"><h3>Weekly deal update</h3><p class="hint" style="margin:0">Plain text you can paste into email or Slack. It includes Salesforce links, next steps, RFx status, and open issues.</p></div>'+
+   '<select class="sel" id="repscope" aria-label="Report scope">'+scopes.map(([v,l])=>'<option value="'+esc(v)+'"'+(v===reportScope?' selected':'')+'>'+esc(l)+'</option>').join('')+'</select>'+
+   '<button class="btn primary" data-act="copy-report">Copy text</button><button class="btn" data-act="dl-report">Download .txt</button></div><pre class="report" id="reptext">'+esc(rep)+'</pre></div>'+
+   '<div class="grid g-2e" style="margin-bottom:16px"><div class="card"><h3>Open MRR by expected close month</h3><p class="hint">Dates come from each deal\'s close date. Orange means the date has passed.</p>'+chart+'</div>'+
+   '<div class="card"><h3>Average days in current stage</h3><p class="hint">Long bars show where deals sit the longest.</p>'+bars(aging,i=>i.value+' days')+'</div></div>'+
+   '<div class="card" style="margin-bottom:16px"><h3>Manager and AE rollup</h3><p class="hint">Open deals only.</p><div class="tablewrap" style="border:0"><table><thead><tr><th>Manager / AE</th><th class="num">Deals</th><th class="num">MRR</th><th class="num">TCV</th><th class="num">Weighted MRR</th><th class="num">Not on track</th></tr></thead><tbody>'+(rrows||'<tr><td colspan="6"><div class="empty">No open deals.</div></td></tr>')+'</tbody></table></div></div>'+
+   '<div class="card"><h3>Exports</h3><p class="hint">Open in Excel or Google Sheets.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-act="export-deals">Deals CSV</button><button class="btn" data-act="export-gaps">Gaps and issues CSV</button><button class="btn" data-act="export-rfx">RFI / RFP CSV</button><button class="btn" data-act="export-notes">Notes CSV</button></div></div>';
+}
+
+/* =========================================================
+   Data & settings
+   ========================================================= */
+function rosterCard(kind,title,btn,hint){
+  const list = roster(kind); const used = n => S.deals.filter(d=>(kind==='aes'?d.ae:d.manager)===n).length;
+  return '<div class="card" style="margin-bottom:16px"><h3>'+title+'</h3><p class="hint">'+hint+' Removing a name only works if no deal uses it.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'+
+    (list.map(n=>'<span class="chip line" style="padding:4px 6px 4px 12px;font-size:13px">'+esc(n)+' <span class="mini">('+used(n)+')</span><button class="x-btn" style="width:22px;height:22px" data-act="roster-del" data-kind="'+kind+'" data-name="'+esc(n)+'" aria-label="Remove '+esc(n)+'">×</button></span>').join('')||'<span class="mini">No names yet.</span>')+
+    '</div><div style="display:flex;gap:8px;flex-wrap:wrap"><input class="in" id="roster_'+kind+'" placeholder="First and last name" style="max-width:280px" autocomplete="off"><button class="btn" data-act="roster-add" data-kind="'+kind+'">'+btn+'</button></div></div>';
+}
+function viewData(){
+  const nNotes = sum(S.deals,d=>d.notes.length);
+  return head('Data & settings','Your deals live in this browser. Back them up often.')+rosterCard('aes','Account executives','Add an AE','Shows in the AE drop-down on every deal and filter.')+rosterCard('managers','Managers','Add a manager','Shows in the Manager drop-down on every deal and filter.')+
+   '<div class="grid g-2e"><div class="card"><h3>Back up and share</h3><p class="hint">'+S.deals.length+' deals, '+nNotes+' notes. '+(Store.mode==='local'?'Saved in this browser on this computer.':'Browser storage is off here, so changes will not be kept. Export before you leave.')+'</p>'+
+   '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" data-act="export-json">Export backup (.json)</button><button class="btn" data-act="import-json">Import backup</button></div>'+
+   '<p class="hint" style="margin-top:14px">To share with a teammate, export a backup and send them the file. They open Deal Hub and use Import backup. A shared database is the next step once leaders want one live view.</p></div>'+
+   '<div class="card"><h3>Your name</h3><p class="hint">Used in greetings, as the author on notes, and as the default Solutions owner.</p><input class="in" id="ownername" value="'+esc(S.settings.owner||'')+'" placeholder="First and last name"></div></div>'+
+   '<div class="card" style="margin-top:16px"><h3>Start fresh</h3><p class="hint">These cannot be undone. Export a backup first.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn danger" data-act="wipe">Delete everything</button></div></div>'+
+   '<div class="card" style="margin-top:16px"><h3>How the numbers work</h3><p class="hint" style="margin:0">Open pipeline counts Discovery through Negotiation. On Hold, Won and Lost are kept out. Weighted MRR uses stage probability: Discovery 10%, Demo 25%, Technical Validation 50%, Proposal 70%, Negotiation 85%. TCV is MRR times term unless you type your own. A deal needs attention when it is marked at risk, has had no update in 7 days, has an overdue next step, has a passed close date, or has a high-severity open item. Discovery score counts five basics: use case, budget, decision maker, timeline, and current vendor.</p></div>';
+}
+
+/* =========================================================
+   Deal drawer
+   ========================================================= */
+function drawerHtml(d){
+  const ng = openGaps(d); const na = d.actions.filter(a=>!a.done);
+  const si = OPEN.indexOf(d.stage);
+  const tabs = [['overview','Overview'],['notes','Notes',d.notes.length],['gaps','Gaps & issues',ng.length],['rfx','RFI / RFP',hasRfx(d)?'•':''],['actions','Actions',na.length]];
+  const ds = discoScore(d);
+  let h = '<div class="dh"><div class="row1"><h2>'+esc(d.name)+'</h2><button class="x" data-act="close-drawer" aria-label="Close">×</button></div>'+
+    '<div class="sub"><span>'+esc(d.product)+'</span><span>·</span><span>'+esc(d.motion)+'</span>'+(sfId(d.sfdc)?'<span>·</span><span>Op '+esc(sfId(d.sfdc))+'</span>':'')+'</div>'+
+    '<div class="acts">'+(d.sfdc?'<a class="btn primary" href="'+esc(normUrl(d.sfdc))+'" target="_blank" rel="noopener">Open in Salesforce</a><button class="btn" data-act="copy-sfdc">Copy link</button>':'<button class="btn primary" data-act="edit-deal">Add Salesforce link</button>')+'<button class="btn" data-act="edit-deal">Edit details</button><button class="btn" data-act="del-deal">Delete</button></div>'+
+    '<div class="state"><select class="sel" data-field="stage" aria-label="Stage">'+STAGES.map(s=>'<option value="'+s.id+'"'+(s.id===d.stage?' selected':'')+'>'+s.name+'</option>').join('')+'</select>'+
+    '<div class="hp" role="group" aria-label="Health">'+Object.keys(HEALTH).map(k=>'<button data-act="set-health" data-v="'+k+'" aria-pressed="'+(d.health===k)+'"><span class="dot '+k+'"></span>'+HEALTH[k]+'</button>').join('')+'</div></div></div>';
+  h += '<div class="dbody"><div class="facts">'+
+    fact('AE',esc(d.ae||'—'))+fact('Manager',esc(d.manager||'—'))+fact('Solutions owner',esc(d.se||'—'))+
+    '<div class="fact"><div class="l">This deal MRR</div><div class="v big">'+money(d.mrr)+'</div></div><div class="fact"><div class="l">Potential TCV ('+d.term+' mo)</div><div class="v big">'+money(d.tcv)+'</div></div>'+fact('Expected close',d.closeDate?fmtDate(d.closeDate)+' <span class="mini">('+(daysUntil(d.closeDate)<0?(-daysUntil(d.closeDate))+'d ago':'in '+daysUntil(d.closeDate)+'d')+')</span>':'—')+
+    fact('Account MRR today',d.acctMrr?money(d.acctMrr):'—')+fact('Salesforce account #',esc(d.acctNo||'—'))+fact('Competitor',esc(d.competitor||'—'))+
+    fact('Days in stage',daysSince(d.stageAt))+fact('Last updated',ago(daysSince(d.updatedAt)))+fact('Created',fmtDT(d.createdAt))+
+    '<div class="fact wide"><div class="l">Next step'+(d.nextStepDue?' · '+dueText(d.nextStepDue):'')+'</div><div class="v" style="white-space:normal">'+esc(d.nextStep||'None set. Add one in Edit details.')+'</div></div></div>'+
+    '<div class="tabs" role="tablist">'+tabs.map(([k,l,n])=>'<button role="tab" data-act="tab" data-v="'+k+'" aria-selected="'+(drawerTab===k)+'">'+l+(n!==undefined&&n!==''&&n!==0?'<span class="n">'+n+'</span>':'')+'</button>').join('')+'</div>';
+  if(drawerTab==='overview'){
+    const fl = flagsFor(d);
+    h += '<div class="box"><h4>Money at play</h4><p class="mini" style="margin:0 0 8px">Type what you know. TCV fills in as MRR times term. Type your own TCV to override, or clear it to go back to the math.</p><div class="form-row"><div><div class="mini">MRR at play ($ per month)</div><input class="in" type="number" min="0" step="any" data-money="mrr" value="'+(d.mrr||'')+'" placeholder="0"></div><div><div class="mini">Term (months)</div><input class="in" type="number" min="1" step="1" data-money="term" value="'+(d.term||36)+'"></div><div><div class="mini">Potential TCV ($)</div><input class="in" type="number" min="0" step="any" data-money="tcv" value="'+(d.tcv||'')+'" placeholder="0"></div><div><div class="mini">Account MRR today ($)</div><input class="in" type="number" min="0" step="any" data-money="acctMrr" value="'+(d.acctMrr||'')+'" placeholder="0"></div></div></div>'+
+      (fl.length?'<div class="box"><h4>Needs attention</h4><div class="flags">'+fl.map(f=>chip(f.t,f.k==='bad'?'bad':'warn')).join('')+'</div></div>':'')+
+      (isOpen(d)?'<div class="box"><h4>Stage progress</h4><div class="stepper">'+OPEN.map((id,i)=>'<div class="'+(i<si?'done':i===si?'now':'')+'"><i></i>'+esc(STAGE(id).name)+'</div>').join('')+'</div></div>':'')+
+      '<div class="box"><h4>Where we are</h4><textarea rows="3" data-field="summary" placeholder="One or two sentences anyone on the leadership team can read.">'+esc(d.summary)+'</textarea></div>'+
+      '<div class="box"><h4>Who is involved and context</h4><textarea rows="3" data-field="context" placeholder="Champion, economic buyer, size, systems, why now.">'+esc(d.context)+'</textarea></div>'+
+      '<div class="box"><h4>Discovery check <span class="chip '+(ds>=4?'good':ds>=3?'warn':'bad')+'" style="margin-left:6px">'+ds+' / 5</span></h4><p class="mini" style="margin:0 0 8px">Tick what we knew when the op was opened or know now. This feeds the quarterly review.</p>'+
+      DISCO.map(([k,l])=>'<label class="ck" style="padding:6px 4px"><input type="checkbox" data-disco="'+k+'"'+(d.disco[k]?' checked':'')+'><span class="tx">'+l+'</span></label>').join('')+
+      '<div class="form-row" style="margin-top:10px"><div><div class="mini">How well was this op uncovered?</div><select class="sel in" data-field="opQuality">'+Object.entries(OP_QUALITY).map(([k,v])=>'<option value="'+k+'"'+(d.opQuality===k?' selected':'')+'>'+v+'</option>').join('')+'</select></div>'+
+      ((d.opQuality!=='good'||d.stage==='lost')?'<div><div class="mini">Main reason it is not turning into revenue</div><select class="sel in" data-field="missReason"><option value="">Choose a reason</option>'+MISS_REASONS.map(r=>'<option'+(d.missReason===r?' selected':'')+'>'+r+'</option>').join('')+'</select></div>':'')+'</div></div>';
+  }
+  if(drawerTab==='notes'){
+    h += '<form class="box" data-form="note"><h4>Add a note</h4><div class="form-row"><select class="sel in" name="type">'+NOTE_TYPES.map(t=>'<option>'+t+'</option>').join('')+'</select><input class="in" type="date" name="date" value="'+ymd(new Date())+'" aria-label="Date"></div><textarea name="text" rows="3" placeholder="What happened? What did you learn? What is next?" required></textarea><div style="margin-top:8px;text-align:right"><button class="btn primary sm" type="submit">Add note</button></div></form>'+
+      '<div class="tl">'+(d.notes.slice().sort((a,b)=>new Date(b.at)-new Date(a.at)).map(n=>'<div class="it '+(n.type==='System'?'sys':'')+'"><div class="hd"><span class="chip '+(n.type==='System'?'':'blue')+'">'+esc(n.type)+'</span><span class="mini">'+fmtDT(n.at)+(n.author&&n.type!=='System'?' · '+esc(n.author):'')+'</span><span style="flex:1"></span>'+(n.type==='System'?'':'<button class="x-btn" data-act="del-note" data-id="'+n.id+'" aria-label="Delete note">×</button>')+'</div><div class="tx">'+esc(n.text)+'</div></div>').join('')||'<div class="empty"><b>No notes yet.</b>Log calls, demos, and updates so leaders can follow the story.</div>')+'</div>';
+  }
+  if(drawerTab==='gaps'){
+    h += '<form class="box" data-form="gap"><h4>Add a gap, issue, risk, or blocker</h4><div class="form-row"><select class="sel in" name="type">'+GAP_TYPES.map(t=>'<option>'+t+'</option>').join('')+'</select><select class="sel in" name="cat">'+GAP_CATS.map(t=>'<option>'+t+'</option>').join('')+'</select><select class="sel in" name="sev"><option>High</option><option selected>Med</option><option>Low</option></select></div>'+
+      '<div class="form-row"><input class="in" name="title" placeholder="What is the gap or issue?" required><input class="in" name="owner" placeholder="Owner"><input class="in" name="ref" placeholder="Jira / ticket link"></div><textarea name="detail" rows="2" placeholder="Details (optional)"></textarea><div style="margin-top:8px;text-align:right"><button class="btn primary sm" type="submit">Add</button></div></form>'+
+      (d.gaps.slice().sort((a,b)=>(a.status==='Resolved')-(b.status==='Resolved')||SEVS.indexOf(a.sev)-SEVS.indexOf(b.sev)).map(g=>'<div class="gi '+g.sev+' '+(g.status==='Resolved'?'done':'')+'"><div class="h"><b>'+esc(g.title)+'</b><button class="x-btn" data-act="del-gap" data-id="'+g.id+'" aria-label="Delete">×</button></div>'+(g.detail?'<div class="d">'+esc(g.detail)+'</div>':'')+'<div class="m">'+chip(g.type,'blue')+chip(g.cat,'line')+chip(g.sev,g.sev==='High'?'bad':g.sev==='Med'?'warn':'')+(g.owner?'<span class="mini">Owner: '+esc(g.owner)+'</span>':'')+(g.ref?(isUrl(g.ref)?'<a class="mini" href="'+esc(g.ref)+'" target="_blank" rel="noopener">Ticket link</a>':'<span class="mini">'+esc(g.ref)+'</span>'):'')+'<span class="mini">'+daysSince(g.at)+'d old</span><span style="flex:1"></span><select class="sel" data-gapstatus="'+g.id+'" aria-label="Status">'+GAP_STATUS.map(s=>'<option'+(g.status===s?' selected':'')+'>'+s+'</option>').join('')+'</select></div></div>').join('')||'<div class="empty"><b>No gaps or issues logged.</b>Add anything that could slow or stop this deal.</div>');
+  }
+  if(drawerTab==='rfx'){
+    h += '<div class="box"><h4>RFI</h4><div class="form-row"><div><div class="mini">Status</div><select class="sel in" data-rfx="rfi.status">'+selOpts(RFI_STATUS,d.rfi.status)+'</select></div><div><div class="mini">Date received</div><input class="in" type="date" data-rfx="rfi.date" value="'+esc(d.rfi.date)+'"></div><div><div class="mini">Response due</div><input class="in" type="date" data-rfx="rfi.due" value="'+esc(d.rfi.due)+'"></div></div>'+
+      '<input class="in" style="margin-bottom:8px" data-rfx="rfi.link" value="'+esc(d.rfi.link)+'" placeholder="Link to RFI document or response folder"><textarea rows="2" data-rfx="rfi.note" placeholder="Notes: scope, scoring, who responded, how it went">'+esc(d.rfi.note)+'</textarea></div>'+
+      '<div class="box"><h4>RFP</h4><div class="form-row"><div><div class="mini">Status</div><select class="sel in" data-rfx="rfp.status">'+selOpts(RFP_STATUS,d.rfp.status)+'</select></div><div><div class="mini">Selected to participate?</div><select class="sel in" data-rfx="rfp.selected"><option value="">Not known</option>'+selOpts(['Yes','No','Pending'],d.rfp.selected)+'</select></div><div><div class="mini">RFP due</div><input class="in" type="date" data-rfx="rfp.due" value="'+esc(d.rfp.due)+'"></div></div>'+
+      '<textarea rows="2" data-rfx="rfp.note" placeholder="Notes: number of vendors, evaluation criteria, orals date, decision date">'+esc(d.rfp.note)+'</textarea></div>'+
+      '<p class="mini">Tip: after an RFI, set the RFP status to Anticipated, then Invited once we are selected to participate.</p>';
+  }
+  if(drawerTab==='actions'){
+    h += '<form class="box" data-form="action"><h4>Add an action</h4><div class="form-row"><input class="in" name="text" placeholder="What needs to happen?" required style="flex:3"><input class="in" type="date" name="due" aria-label="Due date"><button class="btn primary sm" type="submit">Add</button></div></form>'+
+      '<div class="box" style="padding:6px 16px">'+(d.actions.slice().sort((a,b)=>a.done-b.done||(a.due||'9999').localeCompare(b.due||'9999')).map(a=>'<div class="ck '+(a.done?'done':'')+'"><input type="checkbox" data-actdone="'+a.id+'"'+(a.done?' checked':'')+' aria-label="Done"><span class="tx">'+esc(a.text)+'</span>'+(a.due?'<span class="chip '+(!a.done&&daysUntil(a.due)<0?'bad':'line')+'">'+(a.done?fmtDate(a.due):dueText(a.due))+'</span>':'')+'<button class="x-btn" data-act="del-action" data-id="'+a.id+'" aria-label="Delete">×</button></div>').join('')||'<div class="empty"><b>No actions yet.</b></div>')+'</div>';
+  }
+  return h+'</div>';
+}
+const fact = (l,v) => '<div class="fact"><div class="l">'+l+'</div><div class="v">'+v+'</div></div>';
+function renderDrawer(keepScroll){
+  const el=$('#drawer'); const d=openId&&dealById(openId);
+  if(!d){ el.classList.remove('on'); $('#scrim').classList.remove('on'); return; }
+  const sc = keepScroll && $('.dbody',el) ? $('.dbody',el).scrollTop : 0;
+  el.innerHTML = drawerHtml(d); el.classList.add('on'); $('#scrim').classList.add('on');
+  const b=$('.dbody',el); if(b&&sc) b.scrollTop=sc;
+}
+function openDeal(id,tab){ openId=id; drawerTab=tab||'overview'; renderDrawer(); }
+function closeDrawer(){ openId=null; renderDrawer(); }
+
+/* ---------- mutations ---------- */
+function addSysNote(d,text){ d.notes.push({id:uid(),type:'System',at:nowISO(),text,author:''}); }
+function moveStage(d,stage){
+  if(d.stage===stage) return;
+  const from=STAGE(d.stage).name; d.stage=stage; d.stageAt=nowISO(); d.history.push({stage,at:d.stageAt});
+  addSysNote(d,'Stage changed: '+from+' to '+STAGE(stage).name); touch(d); persist();
+}
+
+/* ---------- deal form ---------- */
+function openModal(html){ $('#modalbox').innerHTML=html; $('#modal').classList.add('on'); const f=$('#modalbox input,#modalbox select'); if(f) f.focus(); }
+function closeModal(){ $('#modal').classList.remove('on'); $('#modalbox').innerHTML=''; }
+function dealForm(id){
+  const d = id? dealById(id) : {name:'',sfdc:'',ae:'',manager:'',se:S.settings.owner||'',product:'NCC',stage:'discovery',health:'green',mrr:'',term:36,tcv:'',closeDate:'',nextStep:'',nextStepDue:'',competitor:'',summary:'',motion:'Strategic Expansion'};
+  const inp=(label,name,val,cls,extra)=>'<div class="fg '+(cls||'')+'"><label for="f_'+name+'">'+label+'</label><input class="in" id="f_'+name+'" name="'+name+'" value="'+esc(val)+'" '+(extra||'')+'></div>';
+  const sel=(label,name,list,val,cls,pairs)=>'<div class="fg '+(cls||'')+'"><label for="f_'+name+'">'+label+'</label><select class="sel in" id="f_'+name+'" name="'+name+'" style="max-width:none;width:100%">'+(pairs?list.map(([v,l])=>'<option value="'+v+'"'+(v===val?' selected':'')+'>'+esc(l)+'</option>').join(''):list.map(v=>'<option'+(v===val?' selected':'')+'>'+esc(v)+'</option>').join(''))+'</select></div>';
+  const rosterSel=(label,name,list,val,cls,noun)=>{ const L=uniq([...list,val]); return '<div class="fg '+cls+'"><label for="f_'+name+'">'+label+'</label><select class="sel in" id="f_'+name+'" name="'+name+'" data-roster="1" style="max-width:none;width:100%"><option value="">Not assigned</option>'+L.map(x=>'<option'+(x===val?' selected':'')+'>'+esc(x)+'</option>').join('')+'<option value="__new__">+ Add a new '+noun+'…</option></select><input class="in" id="f_'+name+'_new" name="'+name+'_new" placeholder="Type the new name" style="display:none;margin-top:6px" autocomplete="off"></div>'; };
+  const dl = (id,list)=>'<datalist id="'+id+'">'+uniq(list).sort().map(x=>'<option value="'+esc(x)+'">').join('')+'</datalist>';
+  openModal('<form id="dealform" data-id="'+(id||'')+'"><div class="mh"><h2>'+(id?'Edit deal':'New deal')+'</h2><button type="button" class="x" style="background:rgba(255,255,255,.14);border:0;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:20px" data-act="close-modal" aria-label="Close">×</button></div>'+
+    '<div class="mb"><div class="fgrid">'+
+    '<div class="fsec">Deal</div>'+inp('Account name','name',d.name,'w3','required')+inp('Salesforce Op link (paste it in)','sfdc',d.sfdc,'w3','placeholder="https://nextiva.lightning.force.com/…"')+
+    rosterSel('AE','ae',roster('aes'),d.ae,'w3','AE')+rosterSel('Manager','manager',roster('managers'),d.manager,'w3','manager')+
+    inp('Solutions owner','se',d.se,'w3')+sel('Product','product',uniq([...PRODUCTS,d.product]),d.product,'w3')+
+    sel('Stage','stage',STAGES.map(s=>[s.id,s.name]),d.stage,'',true)+sel('Health','health',Object.keys(HEALTH).map(k=>[k,HEALTH[k]]),d.health,'',true)+sel('Motion','motion',uniq([...MOTIONS,d.motion]),d.motion)+
+    '<div class="fsec">Money and timing</div>'+inp('MRR at play ($ per month)','mrr',d.mrr||'','','type="number" min="0" step="any" inputmode="decimal"')+inp('Term (months)','term',d.term||36,'','type="number" min="1" step="1"')+
+    '<div class="fg"><label for="f_tcv">Potential TCV ($)</label><input class="in" id="f_tcv" name="tcv" type="number" min="0" step="any" value="'+esc(d.tcv||'')+'" '+(d.tcvManual?'data-manual="1"':'')+'><div class="help">Fills in as MRR × term. Type your own to override, or type only TCV and MRR is worked out.</div></div>'+
+    inp('Expected close date','closeDate',d.closeDate,'','type="date"')+inp('Competitor','competitor',d.competitor,'w4')+
+    inp('Account MRR today ($, existing customers)','acctMrr',d.acctMrr||'','w3','type="number" min="0" step="any"')+inp('Salesforce account number','acctNo',d.acctNo||'','w3')+
+    '<div class="fsec">What happens next</div>'+inp('Next step','nextStep',d.nextStep,'w4')+inp('Next step due','nextStepDue',d.nextStepDue,'','type="date"')+
+    '<div class="fg w6"><label for="f_summary">Where we are</label><textarea id="f_summary" name="summary" rows="2">'+esc(d.summary)+'</textarea></div></div>'+
+    '</div>'+
+    '<div class="mf"><button type="button" class="btn" data-act="close-modal">Cancel</button><button class="btn primary" type="submit">'+(id?'Save changes':'Create deal')+'</button></div></form>');
+}
+function submitDealForm(form){
+  const f = new FormData(form); const id = form.dataset.id; const v = k => (f.get(k)||'').toString().trim();
+  const pick = (k)=>{ let x=v(k); if(x==='__new__'){ x=v(k+'_new'); if(x){ const key=k==='ae'?'aes':'managers'; S.settings[key]=S.settings[key]||[]; if(!roster(key).includes(x)) S.settings[key].push(x); } } return x; };
+  let mrr = +v('mrr')||0; const term = +v('term')||36; let tcv = v('tcv')===''? mrr*term : +v('tcv');
+  if(!mrr && tcv>0) mrr = Math.round(tcv/term*100)/100;
+  const tcvManual = v('tcv')!=='' && Math.abs(tcv-mrr*term)>1;
+  const vals = {name:v('name'),sfdc:normUrl(v('sfdc')),ae:pick('ae'),manager:pick('manager'),se:v('se'),product:v('product'),stage:v('stage'),health:v('health'),motion:v('motion'),mrr,term,tcv,tcvManual,closeDate:v('closeDate'),competitor:v('competitor'),acctMrr:+v('acctMrr')||0,acctNo:v('acctNo'),nextStep:v('nextStep'),nextStepDue:v('nextStepDue'),summary:v('summary')};
+  if(!vals.name){ toast('Add an account name'); return; }
+  if(id){ const d=dealById(id); const old=d.stage; const ns=vals.stage; delete vals.stage; Object.assign(d,vals); if(old!==ns) moveStage(d,ns); touch(d); persist(); closeModal(); renderAll(); toast('Saved'); }
+  else { const d = Object.assign({id:uid(),context:'',notes:[],gaps:[],actions:[],createdAt:nowISO(),updatedAt:nowISO(),stageAt:nowISO(),history:[{stage:vals.stage,at:nowISO()}],opQuality:'unrated',missReason:'',discoRated:false,tcvManual:false,acctMrr:0,acctNo:'',disco:{use:false,budget:false,buyer:false,timeline:false,incumbent:false},rfi:{status:'None',date:'',due:'',link:'',note:''},rfp:{status:'Not issued',due:'',selected:'',note:''}},vals);
+    d.notes.push({id:uid(),type:'System',at:nowISO(),text:'Deal created in Deal Hub',author:''}); S.deals.unshift(d); persist(); closeModal(); go('deals'); openDeal(d.id); toast('Deal created'); }
+}
+
+/* ---------- navigation & render ---------- */
+const VIEWS = {dashboard:viewDashboard,pipeline:viewPipeline,deals:viewDeals,rfx:viewRfx,quarterly:viewQuarterly,gaps:viewGaps,reports:viewReports,data:viewData};
+function go(v){ if(!VIEWS[v]) v='dashboard'; cur=v; if(location.hash!=='#/'+v) history.replaceState(null,'','#/'+v); renderAll(); window.scrollTo(0,0); }
+function renderNav(){
+  const openN = S.deals.filter(isOpen).length, gapN = allGaps(S.deals).filter(x=>x.g.status!=='Resolved'&&isOpen(x.d)).length, rfxN = S.deals.filter(d=>hasRfx(d)&&!rfpDone(d)&&d.stage!=='lost'&&d.stage!=='won').length;
+  const counts = {deals:openN,gaps:gapN,rfx:rfxN};
+  $('#nav').innerHTML = NAV.map(([k,l])=>'<button data-act="go" data-v="'+k+'"'+(k===cur?' aria-current="page"':'')+'><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[k]+'</svg><span class="lbl">'+l+'</span>'+(counts[k]?'<span class="count">'+counts[k]+'</span>':'')+'</button>').join('');
+}
+function renderMain(){ $('#view').innerHTML = VIEWS[cur](); }
+function renderAll(){ renderNav(); renderMain(); renderDrawer(true); }
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+  const t = e.target.closest('[data-act]'); if(!t) return; const a=t.dataset.act, id=t.dataset.id, v=t.dataset.v;
+  if(t.classList.contains('dc') && t.dataset.justDragged) return;
+  switch(a){
+    case 'go': go(v); break;
+    case 'open': openDeal(id,t.dataset.tab); break;
+    case 'close-drawer': closeDrawer(); break;
+    case 'close-modal': closeModal(); break;
+    case 'new-deal': dealForm(); break;
+    case 'edit-deal': dealForm(openId); break;
+    case 'del-deal': { const d=dealById(openId); if(d && confirm('Delete "'+d.name+'" and all of its notes? This cannot be undone.')){ S.deals=S.deals.filter(x=>x.id!==d.id); persist(); closeDrawer(); renderAll(); toast('Deal deleted'); } break; }
+    case 'copy-sfdc': { const d=dealById(openId); copyText(normUrl(d.sfdc)).then(()=>toast('Salesforce link copied')); break; }
+    case 'set-health': { const d=dealById(openId); if(d.health!==v){ d.health=v; addSysNote(d,'Health set to '+HEALTH[v]); touch(d); persist(); renderAll(); } break; }
+    case 'tab': drawerTab=v; renderDrawer(); break;
+    case 'del-note': { const d=dealById(openId); d.notes=d.notes.filter(n=>n.id!==id); touch(d); persist(); renderAll(); break; }
+    case 'del-gap': { const d=dealById(openId); d.gaps=d.gaps.filter(n=>n.id!==id); touch(d); persist(); renderAll(); break; }
+    case 'del-action': { const d=dealById(openId); d.actions=d.actions.filter(n=>n.id!==id); touch(d); persist(); renderAll(); break; }
+    case 'sort': sortBy = sortBy.key===t.dataset.k? {key:sortBy.key,dir:-sortBy.dir} : {key:t.dataset.k,dir:(['mrr','tcv','gaps'].includes(t.dataset.k)?-1:1)}; renderMain(); break;
+    case 'clear-filters': F={q:'',ae:'',manager:'',product:'',health:''}; $('#q').value=''; renderMain(); break;
+    case 'dash-group': dashGroup=v; renderMain(); break;
+    case 'gap-status': gapF.status=v; renderMain(); break;
+    case 'rfx-filter': rfxF=v; renderMain(); break;
+    case 'set-q': qSel=v; renderMain(); break;
+    case 'copy-report': copyText($('#reptext').textContent).then(()=>toast('Update copied. Paste it anywhere.')); break;
+    case 'dl-report': download('deal-update-'+ymd(new Date())+'.txt',$('#reptext').textContent); break;
+    case 'export-deals': download('deals-'+ymd(new Date())+'.csv',csv([['Account','Salesforce link','AE','Manager','Solutions owner','Product','Motion','Stage','Health','MRR','Term (mo)','TCV','Close date','Next step','Next step due','Competitor','Account MRR today','Account #','Op quality','Miss reason','Discovery score','RFI status','RFP status','Selected for RFP','Open gaps','Where we are','Last updated']].concat(S.deals.map(d=>[d.name,d.sfdc,d.ae,d.manager,d.se,d.product,d.motion,STAGE(d.stage).name,HEALTH[d.health],d.mrr,d.term,d.tcv,d.closeDate,d.nextStep,d.nextStepDue,d.competitor,d.acctMrr,d.acctNo,OP_QUALITY[d.opQuality],d.missReason,discoScore(d),d.rfi.status,d.rfp.status,d.rfp.selected,openGaps(d).length,d.summary,d.updatedAt]))),'text/csv'); break;
+    case 'export-gaps': download('gaps-'+ymd(new Date())+'.csv',csv([['Deal','AE','Type','Title','Category','Severity','Status','Owner','Reference','Details','Opened']].concat(allGaps(S.deals).map(({g,d})=>[d.name,d.ae,g.type,g.title,g.cat,g.sev,g.status,g.owner,g.ref,g.detail,g.at]))),'text/csv'); break;
+    case 'export-rfx': download('rfi-rfp-'+ymd(new Date())+'.csv',csv([['Account','AE','Stage','MRR','RFI status','RFI received','RFI due','RFI note','RFP status','Selected to participate','RFP due','RFP note']].concat(S.deals.filter(hasRfx).map(d=>[d.name,d.ae,STAGE(d.stage).name,d.mrr,d.rfi.status,d.rfi.date,d.rfi.due,d.rfi.note,d.rfp.status,d.rfp.selected,d.rfp.due,d.rfp.note]))),'text/csv'); break;
+    case 'export-notes': download('notes-'+ymd(new Date())+'.csv',csv([['Deal','Date','Type','Author','Note']].concat(S.deals.flatMap(d=>d.notes.map(n=>[d.name,n.at,n.type,n.author,n.text])))),'text/csv'); break;
+    case 'export-json': download('deal-hub-backup-'+ymd(new Date())+'.json',JSON.stringify(S,null,2),'application/json'); toast('Backup downloaded'); break;
+    case 'import-json': $('#importfile').click(); break;
+    case 'roster-add': { const k=t.dataset.kind; const inp=$('#roster_'+k); const nm=(inp.value||'').trim(); if(!nm){ toast('Type a name first'); break; } S.settings[k]=S.settings[k]||[]; if(roster(k).includes(nm)){ toast(nm+' is already on the list'); break; } S.settings[k].push(nm); persist(); renderAll(); toast(nm+' added'); break; }
+    case 'roster-del': { const k=t.dataset.kind, nm=t.dataset.name; const n=S.deals.filter(d=>(k==='aes'?d.ae:d.manager)===nm).length; if(n){ toast(nm+' is on '+n+' deal'+(n>1?'s':'')+'. Reassign those first.'); break; } S.settings[k]=(S.settings[k]||[]).filter(x=>x!==nm); persist(); renderAll(); break; }
+    case 'wipe': if(confirm('Delete ALL deals and notes? This cannot be undone.')){ S.deals=[]; persist(); closeDrawer(); renderAll(); toast('Everything deleted'); } break;
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter' && e.target.matches('[data-act="open"]')) { openDeal(e.target.dataset.id,e.target.dataset.tab); return; }
+  if(e.key==='Escape'){ if($('#modal').classList.contains('on')) closeModal(); else if(openId) closeDrawer(); return; }
+  if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  if(e.key==='/'){ e.preventDefault(); $('#q').focus(); }
+  if(e.key==='n' && !e.metaKey && !e.ctrlKey){ e.preventDefault(); dealForm(); }
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.dataset.filter){ F[t.dataset.filter]=t.value; renderMain(); return; }
+  if(t.dataset.gapf){ gapF[t.dataset.gapf]=t.value; renderMain(); return; }
+  if(t.id==='repscope'){ reportScope=t.value; renderMain(); return; }
+  if(t.id==='rfxadd'){ if(t.value){ openDeal(t.value,'rfx'); } return; }
+  if(t.id==='ownername'){ S.settings.owner=t.value.trim(); persist(); toast('Name saved'); return; }
+  if(t.id==='importfile'){ const file=t.files[0]; if(!file) return; const r=new FileReader(); r.onload=()=>{ try{ const j=JSON.parse(r.result); if(!j||!Array.isArray(j.deals)) throw new Error('bad'); if(!confirm('Replace your current data with this backup ('+j.deals.length+' deals)?')) return; S=j; load0(S); persist(); renderAll(); toast('Backup imported'); }catch(err){ toast('That file is not a Deal Hub backup'); } }; r.readAsText(file); t.value=''; return; }
+  if(t.dataset.roster){ const nn=document.getElementById(t.id+'_new'); if(nn){ nn.style.display=t.value==='__new__'?'block':'none'; if(t.value==='__new__') nn.focus(); } return; }
+  if(!openId) return; const d=dealById(openId); if(!d) return;
+  if(t.dataset.field){ const k=t.dataset.field; if(k==='stage'){ moveStage(d,t.value); renderAll(); return; } d[k]=t.value; touch(d); persist(); if(k==='opQuality'){ renderDrawer(true); } renderMain(); renderNav(); return; }
+  if(t.dataset.money){ const f=t.dataset.money, raw=t.value.trim(), n=+raw||0; if(f==='mrr'){ d.mrr=n; if(!d.tcvManual) d.tcv=Math.round(d.mrr*d.term*100)/100; } else if(f==='term'){ d.term=n>0?n:36; if(!d.tcvManual) d.tcv=Math.round(d.mrr*d.term*100)/100; } else if(f==='tcv'){ if(raw===''){ d.tcvManual=false; d.tcv=Math.round(d.mrr*d.term*100)/100; } else { d.tcv=n; d.tcvManual=true; if(!d.mrr && n>0) d.mrr=Math.round(n/(d.term||36)*100)/100; } } else if(f==='acctMrr'){ d.acctMrr=n; } touch(d); persist(); renderAll(); toast('Saved'); return; }
+  if(t.dataset.disco){ d.disco[t.dataset.disco]=t.checked; d.discoRated=true; touch(d); persist(); renderDrawer(true); renderMain(); return; }
+  if(t.dataset.rfx){ const [g,k]=t.dataset.rfx.split('.'); d[g][k]=t.value; touch(d); persist(); renderAll(); return; }
+  if(t.dataset.gapstatus){ const g=d.gaps.find(x=>x.id===t.dataset.gapstatus); g.status=t.value; g.resolvedAt = t.value==='Resolved'?nowISO():''; touch(d); persist(); renderAll(); return; }
+  if(t.dataset.actdone){ const a=d.actions.find(x=>x.id===t.dataset.actdone); a.done=t.checked; touch(d); persist(); renderAll(); return; }
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.id==='q'){ F.q=t.value; if(!['dashboard','pipeline','deals','rfx','quarterly','gaps','reports'].includes(cur)) cur='deals'; renderMain(); renderNav(); return; }
+  if(t.closest('#dealform') && (t.name==='mrr'||t.name==='term')){ const f=t.closest('form'); const tcv=f.elements.tcv; if(tcv.dataset.manual!=='1'){ tcv.value = Math.round((+f.elements.mrr.value||0)*(+f.elements.term.value||0)); } }
+  if(t.closest('#dealform') && t.name==='tcv'){ t.dataset.manual='1'; }
+});
+document.addEventListener('submit',e=>{
+  const f=e.target; e.preventDefault();
+  if(f.id==='dealform'){ submitDealForm(f); return; }
+  const kind=f.dataset.form; if(!kind||!openId) return; const d=dealById(openId); const fd=new FormData(f); const g=k=>(fd.get(k)||'').toString().trim();
+  if(kind==='note'){ const dt=g('date'); d.notes.push({id:uid(),type:g('type'),at:dt? new Date(dt+'T12:00:00').toISOString():nowISO(),text:g('text'),author:S.settings.owner||''}); }
+  if(kind==='gap'){ d.gaps.push({id:uid(),type:g('type'),title:g('title'),detail:g('detail'),cat:g('cat'),sev:g('sev'),status:'Open',owner:g('owner'),ref:g('ref'),at:nowISO()}); }
+  if(kind==='action'){ d.actions.push({id:uid(),text:g('text'),due:g('due'),done:false}); }
+  touch(d); persist(); renderAll(); toast('Added');
+});
+/* drag and drop on pipeline */
+document.addEventListener('dragstart',e=>{ const c=e.target.closest&&e.target.closest('.dc'); if(!c) return; e.dataTransfer.setData('text/plain',c.dataset.id); e.dataTransfer.effectAllowed='move'; c.classList.add('dragging'); });
+document.addEventListener('dragend',e=>{ const c=e.target.closest&&e.target.closest('.dc'); if(c){ c.classList.remove('dragging'); c.dataset.justDragged='1'; setTimeout(()=>delete c.dataset.justDragged,200); } $$('.col.over').forEach(x=>x.classList.remove('over')); });
+document.addEventListener('dragover',e=>{ const c=e.target.closest&&e.target.closest('.col'); if(c){ e.preventDefault(); $$('.col.over').forEach(x=>{ if(x!==c) x.classList.remove('over'); }); c.classList.add('over'); } });
+document.addEventListener('drop',e=>{ const c=e.target.closest&&e.target.closest('.col'); if(!c) return; e.preventDefault(); const id=e.dataTransfer.getData('text/plain'); const d=dealById(id); if(d){ moveStage(d,c.dataset.stage); renderAll(); toast(d.name+' moved to '+STAGE(c.dataset.stage).name); } });
+window.addEventListener('hashchange',()=>{ const v=location.hash.replace('#/',''); if(VIEWS[v]&&v!==cur){ cur=v; renderAll(); } });
+
+/* ---------- start ---------- */
+function load0(s){ s.settings=s.settings||{owner:''}; if(!Array.isArray(s.settings.aes)) s.settings.aes=[]; if(!Array.isArray(s.settings.managers)) s.settings.managers=[]; s.deals.forEach(d=>{ d.notes=d.notes||[]; d.gaps=d.gaps||[]; d.actions=d.actions||[]; d.history=d.history||[{stage:d.stage,at:d.createdAt||nowISO()}]; d.stageAt=d.stageAt||d.updatedAt||nowISO(); if(d.tcvManual===undefined) d.tcvManual=(d.tcv>0 && Math.abs(d.tcv-(d.mrr||0)*(d.term||36))>1); d.motion=d.motion||'Strategic Expansion'; d.opQuality=d.opQuality||'unrated'; d.missReason=d.missReason||''; d.acctMrr=d.acctMrr||0; d.acctNo=d.acctNo||''; if(d.discoRated===undefined) d.discoRated=Object.values(d.disco||{}).some(Boolean); d.disco=Object.assign({use:false,budget:false,buyer:false,timeline:false,incumbent:false},d.disco||{}); d.rfi=Object.assign({status:'None',date:'',due:'',link:'',note:''},d.rfi||{}); d.rfp=Object.assign({status:'Not issued',due:'',selected:'',note:''},d.rfp||{}); }); }
+load();
+{ const v=location.hash.replace('#/',''); if(VIEWS[v]) cur=v; }
+renderAll();
+window.__dealhub = {go, openDeal, state:()=>S};
+})();
+</script>
+</body>
+</html>
